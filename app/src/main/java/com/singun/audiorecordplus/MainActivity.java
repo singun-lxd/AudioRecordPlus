@@ -2,6 +2,7 @@ package com.singun.audiorecordplus;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,8 +12,11 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.singun.media.audio.AudioConfig;
 import com.singun.media.audio.AudioRecordPlayer;
 import com.singun.system.permission.PermissionRequest;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PermissionRequest.PermissionRequestListener {
     private static final int PERMISSION_REQUEST_CODE = 100;
@@ -32,9 +36,17 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mPermissionRequest = new PermissionRequest(this, new String[]{ Manifest.permission.RECORD_AUDIO }, PERMISSION_REQUEST_CODE);
+        mPermissionRequest = new PermissionRequest(this,
+                new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                PERMISSION_REQUEST_CODE);
         mPermissionRequest.setPermissionRequestListener(this);
-        mAudioRecordPlayer = new AudioRecordPlayer(this, getWindow());
+        mAudioRecordPlayer = new AudioRecordPlayer(this, getWindow()) {
+            @Override
+            protected void updateAudioConfig(AudioConfig config) {
+                config.audioDirPath = new File(Environment.getExternalStorageDirectory(), "record").getAbsolutePath();
+                config.audioName = "testAudio";
+            }
+        };
         mAudioRecordPlayer.setSpeakerOn(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

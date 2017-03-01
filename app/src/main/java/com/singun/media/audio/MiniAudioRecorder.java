@@ -61,6 +61,14 @@ public class MiniAudioRecorder {
         return mIsRecording;
     }
 
+    public int getChannelCount() {
+        return mAudioRecord.getChannelCount();
+    }
+
+    public int getSampleRate() {
+        return mAudioRecord.getSampleRate();
+    }
+
     public void release() {
         mAudioRecord.release();
         mAudioRecord = null;

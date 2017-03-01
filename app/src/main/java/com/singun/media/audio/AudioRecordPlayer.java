@@ -18,6 +18,7 @@ public class AudioRecordPlayer {
 
     private MiniAudioRecorder mAudioRecorder;
     private MiniAudioTrack mAudioTrack;
+    private AudioFileWriter mAudioFileWriter;
     private Thread mRecordPlayThread;
 
     private int mOldMode;
@@ -44,12 +45,13 @@ public class AudioRecordPlayer {
         config.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
         config.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
         config.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-        config.audioCache = new short[1024];
+        config.audioCache = new byte[1024];
 
         updateAudioConfig(config);
 
         mAudioRecorder = new MiniAudioRecorder(config);
         mAudioTrack = new MiniAudioTrack(config);
+        mAudioFileWriter = new AudioFileWriter(config);
 
         mRecordPlayThread = new AudioRecordPlayThread();
         mRecordPlayThread.start();
@@ -74,6 +76,7 @@ public class AudioRecordPlayer {
         mOldMode = mAudioManager.getMode();
         mAudioManager.setMode(AUDIO_MODE);
 
+        mAudioFileWriter.createAudioFile(true);
         mAudioRecorder.startRecording();
         mAudioTrack.startPlaying();
 
@@ -89,6 +92,7 @@ public class AudioRecordPlayer {
 
         mAudioRecorder.stop();
         mAudioTrack.stop();
+        mAudioFileWriter.saveAudioFormat(mAudioRecorder.getSampleRate(), mAudioRecorder.getChannelCount());
 
         mWorking = false;
     }
@@ -101,8 +105,10 @@ public class AudioRecordPlayer {
         mReleased = true;
         mAudioRecorder.release();
         mAudioTrack.release();
+        mAudioFileWriter.release();
         mAudioRecorder = null;
         mAudioTrack = null;
+        mAudioFileWriter = null;
         mCurrentWindow = null;
         mAudioManager = null;
     }
@@ -122,6 +128,9 @@ public class AudioRecordPlayer {
                 }
                 if (length != 0 && mAudioTrack != null) {
                     mAudioTrack.writeAudioData(length);
+                }
+                if (length != 0 && mAudioFileWriter != null) {
+                    mAudioFileWriter.saveRecordData(length);
                 }
             }
         }
