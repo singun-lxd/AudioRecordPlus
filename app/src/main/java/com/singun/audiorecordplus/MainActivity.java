@@ -1,5 +1,6 @@
 package com.singun.audiorecordplus;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +11,14 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.singun.media.audio.AudioRecordPlayer;
+import com.singun.system.permission.PermissionRequest;
+
+public class MainActivity extends AppCompatActivity implements PermissionRequest.PermissionRequestListener {
+    private static final int PERMISSION_REQUEST_CODE = 100;
+
+    private PermissionRequest mPermissionRequest;
+    private AudioRecordPlayer mAudioRecordPlayer;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -24,12 +32,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mPermissionRequest = new PermissionRequest(this, new String[]{ Manifest.permission.RECORD_AUDIO }, PERMISSION_REQUEST_CODE);
+        mPermissionRequest.setPermissionRequestListener(this);
+        mAudioRecordPlayer = new AudioRecordPlayer(this, getWindow());
+        mAudioRecordPlayer.setSpeakerOn(true);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                mPermissionRequest.checkPermission();
             }
         });
 
@@ -58,6 +70,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        mPermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onDestroy() {
+        mAudioRecordPlayer.release();
+        mAudioRecordPlayer = null;
+        mPermissionRequest = null;
+    }
+
+    @Override
+    public void onPermissionGranted() {
+        startOrStopRecording();
+    }
+
+    @Override
+    public void onPermissionDenied() {
+
+    }
+
+
+    private void startOrStopRecording() {
+        if (mAudioRecordPlayer.isWorking()) {
+            mAudioRecordPlayer.stop();
+        } else {
+            mAudioRecordPlayer.startWorking();
+        }
     }
 
     /**
