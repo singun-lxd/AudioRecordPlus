@@ -98,12 +98,22 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     }
 
     @Override
-    public void onPermissionGranted() {
+    public void onPermissionAllGranted() {
         startOrStopRecording();
     }
 
     @Override
-    public void onPermissionDenied() {
+    public void onPermissionAllDenied() {
+
+    }
+
+    @Override
+    public void onPermissionGranted(String permission) {
+
+    }
+
+    @Override
+    public void onPermissionDenied(String permission) {
 
     }
 

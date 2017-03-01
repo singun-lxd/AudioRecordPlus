@@ -37,7 +37,7 @@ public class PermissionRequest {
                     mRequestCode);
         } else {
             if (mListener != null) {
-                mListener.onPermissionGranted();
+                mListener.onPermissionAllGranted();
             }
         }
     }
@@ -63,14 +63,29 @@ public class PermissionRequest {
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         if (requestCode == mRequestCode) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0) {
                 if (mListener != null) {
-                    mListener.onPermissionGranted();
+                    int grantedCount = 0;
+                    for (int i= 0; i < permissions.length; i++) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            mListener.onPermissionGranted(permissions[i]);
+                            grantedCount++;
+                        } else {
+                            mListener.onPermissionDenied(permissions[i]);
+                        }
+                    }
+                    if (grantedCount == permissions.length) {
+                        mListener.onPermissionAllGranted();
+                    } else if (grantedCount == 0) {
+                        mListener.onPermissionAllDenied();
+                    }
                 }
             } else {
                 if (mListener != null) {
-                    mListener.onPermissionDenied();
+                    for (String permission : permissions) {
+                        mListener.onPermissionDenied(permission);
+                    }
+                    mListener.onPermissionAllDenied();
                 }
             }
             return;
@@ -78,7 +93,9 @@ public class PermissionRequest {
     }
 
     public interface PermissionRequestListener {
-        void onPermissionGranted();
-        void onPermissionDenied();
+        void onPermissionAllGranted();
+        void onPermissionAllDenied();
+        void onPermissionGranted(String permission);
+        void onPermissionDenied(String permission);
     }
 }
