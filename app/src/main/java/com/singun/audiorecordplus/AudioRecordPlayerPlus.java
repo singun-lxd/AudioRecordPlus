@@ -16,6 +16,7 @@ import java.io.File;
 
 public class AudioRecordPlayerPlus extends AudioRecordPlayer {
     private WebRTCWrapper mWebRTCWrapper;
+    private boolean mLinkError;
     private boolean mNoiseProcessEnabled;
 
     public AudioRecordPlayerPlus(Context context, Window window) {
@@ -44,12 +45,17 @@ public class AudioRecordPlayerPlus extends AudioRecordPlayer {
 
     private void initWebRTC(AudioConfig config) {
         mWebRTCWrapper = new WebRTCWrapper();
-        mWebRTCWrapper.init(config.sampleRateInHz);
+        try {
+            mWebRTCWrapper.init(config.sampleRateInHz);
+        } catch (UnsatisfiedLinkError e) {
+            mLinkError = true;
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void processAudioData(AudioConfig audioConfig, int length) {
-        if (mNoiseProcessEnabled && mWebRTCWrapper != null) {
+        if (mNoiseProcessEnabled && mWebRTCWrapper != null && !mLinkError) {
             byte[] bufferOut = new byte[length];
             System.arraycopy(audioConfig.audioDataIn, 0, bufferOut, 0, length);
             mWebRTCWrapper.processNoise(bufferOut);
@@ -63,6 +69,8 @@ public class AudioRecordPlayerPlus extends AudioRecordPlayer {
     public void release() {
         super.release();
 
-        mWebRTCWrapper.release();
+        if (!mLinkError) {
+            mWebRTCWrapper.release();
+        }
     }
 }

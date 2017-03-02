@@ -102,9 +102,14 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+
         mAudioRecordPlayer.release();
-        mVisualizer.release();
         mAudioRecordPlayer = null;
+        if (mVisualizer != null) {
+            mVisualizer.release();
+            mVisualizer = null;
+        }
         mPermissionRequest = null;
     }
 
