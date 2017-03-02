@@ -56,7 +56,7 @@ public class AudioRecordPlayerPlus extends AudioRecordPlayer {
     @Override
     protected void processAudioData(AudioConfig audioConfig, int length) {
         if (mNoiseProcessEnabled && mWebRTCWrapper != null && !mLinkError) {
-            byte[] bufferOut = new byte[length];
+            short[] bufferOut = new short[length];
             System.arraycopy(audioConfig.audioDataIn, 0, bufferOut, 0, length);
             mWebRTCWrapper.processNoise(bufferOut);
             audioConfig.audioDataOut = bufferOut;

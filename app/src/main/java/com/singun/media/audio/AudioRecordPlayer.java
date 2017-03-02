@@ -55,13 +55,14 @@ public class AudioRecordPlayer {
         mAudioConfig.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
         mAudioConfig.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
         mAudioConfig.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-        mAudioConfig.audioDataIn = new byte[1024];
 
         updateAudioConfig(mAudioConfig);
 
         mAudioRecorder = new MiniAudioRecorder(mAudioConfig);
         mAudioTrack = new MiniAudioTrack(mAudioConfig);
         mAudioFileWriter = new AudioFileWriter(mAudioConfig);
+
+        mAudioConfig.audioDataIn = new short[mAudioConfig.audioDataSize];
 
         mRecordPlayThread = new AudioRecordPlayThread();
         mRecordPlayThread.start();
@@ -170,9 +171,9 @@ public class AudioRecordPlayer {
                 }
                 if (length > 0) {
                     processAudioData(mAudioConfig, length);
-                    if (mListener != null) {
-                        mListener.onAudioDataProcessed(mAudioConfig.audioDataOut);
-                    }
+//                    if (mListener != null) {
+//                        mListener.onAudioDataProcessed(mAudioConfig.audioDataOut);
+//                    }
                     if (mTrackEnabled && mAudioTrack != null) {
                         mAudioTrack.writeAudioData(length);
                     }

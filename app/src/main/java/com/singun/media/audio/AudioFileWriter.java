@@ -2,6 +2,8 @@ package com.singun.media.audio;
 
 import android.text.TextUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,7 +16,7 @@ import java.io.OutputStream;
 
 public class AudioFileWriter {
     private AudioConfig mAudioConfig;
-    private OutputStream mOutputStream;
+    private DataOutputStream mOutputStream;
 
     public AudioFileWriter(AudioConfig audioConfig) {
         mAudioConfig = audioConfig;
@@ -31,16 +33,16 @@ public class AudioFileWriter {
         if (!dir.isDirectory()) {
             dir.mkdirs();
         }
-        File pcmFile = new File(mAudioConfig.audioDirPath, mAudioConfig.audioName + ".pcm");
-        if (pcmFile.exists()) {
-            if (forceCreate) {
-                pcmFile.delete();
-            } else {
-                return false;
-            }
+
+        File pcmFile = checkFile(forceCreate);
+        if (pcmFile == null) {
+            return false;
         }
+
         try {
-            mOutputStream = new FileOutputStream(pcmFile);
+            int cacheByte = mAudioConfig.audioDataSize * 2;
+            FileOutputStream fileOutputStream = new FileOutputStream(pcmFile);
+            mOutputStream = new DataOutputStream(new BufferedOutputStream(fileOutputStream, cacheByte));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
@@ -48,12 +50,39 @@ public class AudioFileWriter {
         return true;
     }
 
+    private File checkFile(boolean forceCreate) {
+        File pcmFile = new File(mAudioConfig.audioDirPath, mAudioConfig.audioName + ".pcm");
+        if (pcmFile.exists()) {
+            if (forceCreate) {
+                pcmFile.delete();
+            } else {
+                return null;
+            }
+        }
+
+        File wavFile = new File(mAudioConfig.audioDirPath, mAudioConfig.audioName + ".wav");
+        if (wavFile.exists()) {
+            if (forceCreate) {
+                wavFile.delete();
+            } else {
+                return null;
+            }
+        }
+        return pcmFile;
+    }
+
     public void saveRecordData(int length) {
         if (mOutputStream == null) {
             return;
         }
+        if (length > mAudioConfig.audioDataOut.length) {
+            length = mAudioConfig.audioDataOut.length;
+        }
         try {
-            mOutputStream.write(mAudioConfig.audioDataOut, 0, length);
+            for (int i = 0; i < length; i++) {
+                short data = mAudioConfig.audioDataOut[i];
+                mOutputStream.writeShort(data);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

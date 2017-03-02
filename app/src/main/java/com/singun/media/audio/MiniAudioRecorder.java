@@ -31,6 +31,8 @@ public class MiniAudioRecorder {
                 mAudioConfig.channelInConfig,
                 mAudioConfig.audioFormat,
                 minBufferSize);
+
+        mAudioConfig.audioDataSize = minBufferSize / 2;
     }
 
     public void startRecording() {
