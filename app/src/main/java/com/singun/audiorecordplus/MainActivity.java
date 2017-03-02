@@ -2,32 +2,22 @@ package com.singun.audiorecordplus;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.os.Environment;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import com.singun.media.audio.AudioConfig;
-import com.singun.media.audio.AudioRecordPlayer;
 import com.singun.system.permission.PermissionRequest;
-
-import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PermissionRequest.PermissionRequestListener {
     private static final int PERMISSION_REQUEST_CODE = 100;
 
     private PermissionRequest mPermissionRequest;
-    private AudioRecordPlayer mAudioRecordPlayer;
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
+    private AudioRecordPlayerPlus mAudioRecordPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +26,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mPermissionRequest = new PermissionRequest(this,
-                new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE },
-                PERMISSION_REQUEST_CODE);
-        mPermissionRequest.setPermissionRequestListener(this);
-        mAudioRecordPlayer = new AudioRecordPlayer(this, getWindow()) {
-            @Override
-            protected void updateAudioConfig(AudioConfig config) {
-                config.audioDirPath = new File(Environment.getExternalStorageDirectory(), "record").getAbsolutePath();
-                config.audioName = "testAudio";
-            }
-        };
-        mAudioRecordPlayer.setSpeakerOn(true);
+        initRecord();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +38,17 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        tv.setText("Hello World");
+    }
+
+    private void initRecord() {
+        mPermissionRequest = new PermissionRequest(this,
+                new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                PERMISSION_REQUEST_CODE);
+        mPermissionRequest.setPermissionRequestListener(this);
+        mAudioRecordPlayer = new AudioRecordPlayerPlus(this, getWindow());
+        mAudioRecordPlayer.setSpeakerOn(true);
+        mAudioRecordPlayer.setNoiseProcessEnabled(false);
     }
 
     @Override
@@ -85,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         mPermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -108,6 +96,11 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     }
 
     @Override
+    public void onPermissionPartDenied() {
+        Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onPermissionGranted(String permission) {
 
     }
@@ -117,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
     }
 
-
     private void startOrStopRecording() {
         if (mAudioRecordPlayer.isWorking()) {
             mAudioRecordPlayer.stop();
@@ -125,10 +117,4 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
             mAudioRecordPlayer.startWorking();
         }
     }
-
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
 }

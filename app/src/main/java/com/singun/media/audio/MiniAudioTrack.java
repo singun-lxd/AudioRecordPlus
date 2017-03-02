@@ -1,6 +1,5 @@
 package com.singun.media.audio;
 
-import android.content.Context;
 import android.media.AudioTrack;
 
 /**
@@ -45,7 +44,7 @@ public class MiniAudioTrack {
     }
 
     public void writeAudioData(int length) {
-        mAudioTrack.write(mAudioConfig.audioCache, 0, length);
+        mAudioTrack.write(mAudioConfig.audioDataOut, 0, length);
     }
 
     public void stop() {

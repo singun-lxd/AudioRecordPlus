@@ -48,7 +48,7 @@ public class AudioFileWriter {
             return;
         }
         try {
-            mOutputStream.write(mAudioConfig.audioCache, 0, length);
+            mOutputStream.write(mAudioConfig.audioDataOut, 0, length);
         } catch (IOException e) {
             e.printStackTrace();
         }

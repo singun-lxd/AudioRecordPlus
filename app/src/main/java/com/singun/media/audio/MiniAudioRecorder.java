@@ -44,7 +44,7 @@ public class MiniAudioRecorder {
     }
 
     public int readAudioData() {
-        return mAudioRecord.read(mAudioConfig.audioCache, 0, mAudioConfig.audioCache.length);
+        return mAudioRecord.read(mAudioConfig.audioDataIn, 0, mAudioConfig.audioDataIn.length);
     }
 
     public void stop() {

@@ -60,41 +60,39 @@ public class PermissionRequest {
         return needRequestList.toArray(permissionArr);
     }
 
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        if (requestCode == mRequestCode) {
-            if (grantResults.length > 0) {
-                if (mListener != null) {
-                    int grantedCount = 0;
-                    for (int i= 0; i < permissions.length; i++) {
-                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                            mListener.onPermissionGranted(permissions[i]);
-                            grantedCount++;
-                        } else {
-                            mListener.onPermissionDenied(permissions[i]);
-                        }
-                    }
-                    if (grantedCount == permissions.length) {
-                        mListener.onPermissionAllGranted();
-                    } else if (grantedCount == 0) {
-                        mListener.onPermissionAllDenied();
-                    }
-                }
-            } else {
-                if (mListener != null) {
-                    for (String permission : permissions) {
-                        mListener.onPermissionDenied(permission);
-                    }
-                    mListener.onPermissionAllDenied();
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode != mRequestCode || mListener == null) {
+            return;
+        }
+        if (grantResults.length > 0) {
+            int grantedCount = 0;
+            for (int i= 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    mListener.onPermissionGranted(permissions[i]);
+                    grantedCount++;
+                } else {
+                    mListener.onPermissionDenied(permissions[i]);
                 }
             }
-            return;
+            if (grantedCount == permissions.length) {
+                mListener.onPermissionAllGranted();
+            } else if (grantedCount == 0) {
+                mListener.onPermissionAllDenied();
+            } else {
+                mListener.onPermissionPartDenied();
+            }
+        } else {
+            for (String permission : permissions) {
+                mListener.onPermissionDenied(permission);
+            }
+            mListener.onPermissionAllDenied();
         }
     }
 
     public interface PermissionRequestListener {
         void onPermissionAllGranted();
         void onPermissionAllDenied();
+        void onPermissionPartDenied();
         void onPermissionGranted(String permission);
         void onPermissionDenied(String permission);
     }

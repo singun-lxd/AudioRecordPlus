@@ -12,7 +12,8 @@ public class AudioConfig {
     public int channelOutConfig;
     public int audioFormat;
 
-    public byte[] audioCache;
+    public byte[] audioDataIn;
+    public byte[] audioDataOut;
     public String audioDirPath;
     public String audioName;
 }

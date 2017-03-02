@@ -1,45 +1,24 @@
-# Sets the minimum version of CMake required to build the native
-# library. You should either keep the default value or only pass a
-# value of 3.4.0 or lower.
-
 cmake_minimum_required(VERSION 3.4.1)
 
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds it for you.
-# Gradle automatically packages shared libraries with your APK.
+project(webrtcwrap)
 
-add_library( # Sets the name of the library.
-             native-lib
+#notice the "recycling" of CMAKE_C_FLAGS
+#this is necessary to pick up android flags
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic" )
 
-             # Sets the library as a shared library.
-             SHARED
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-             # Provides a relative path to your source file(s).
-             # Associated headers in the same location as their source
-             # file are automatically included.
-             src/main/cpp/native-lib.cpp )
+add_definitions(-DFIXED_POINT -DUSE_KISS_FFT -DHAVE_CONFIG_H)
 
-# Searches for a specified prebuilt library and stores the path as a
-# variable. Because system libraries are included in the search path by
-# default, you only need to specify the name of the public NDK library
-# you want to add. CMake verifies that the library exists before
-# completing its build.
+add_library(webrtcwrap SHARED
 
-find_library( # Sets the name of the path variable.
-              log-lib
+            src/main/cpp/jni_main.cpp
 
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
+            src/main/cpp/audio_ns.cpp
+            src/main/cpp/fft4g.cpp
+            src/main/cpp/noise_suppression.cpp
+            src/main/cpp/ns_core.cpp
 
-# Specifies libraries CMake should link to your target library. You
-# can link multiple libraries, such as libraries you define in the
-# build script, prebuilt third-party libraries, or system libraries.
+           )
 
-target_link_libraries( # Specifies the target library.
-                       native-lib
-
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib} )
+target_link_libraries(webrtcwrap log m)

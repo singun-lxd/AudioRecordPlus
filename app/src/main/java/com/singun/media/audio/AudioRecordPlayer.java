@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
+import android.support.annotation.CallSuper;
 import android.view.Window;
 
 /**
@@ -19,6 +20,7 @@ public class AudioRecordPlayer {
     private MiniAudioRecorder mAudioRecorder;
     private MiniAudioTrack mAudioTrack;
     private AudioFileWriter mAudioFileWriter;
+    private AudioConfig mAudioConfig;
     private Thread mRecordPlayThread;
 
     private int mOldMode;
@@ -38,20 +40,20 @@ public class AudioRecordPlayer {
             mCurrentWindow.setVolumeControlStream(AUDIO_MODE);
         }
 
-        AudioConfig config = new AudioConfig();
-        config.streamType = AudioManager.MODE_IN_COMMUNICATION;
-        config.audioSource = MediaRecorder.AudioSource.VOICE_COMMUNICATION;
-        config.sampleRateInHz = 8000;
-        config.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
-        config.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
-        config.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-        config.audioCache = new byte[1024];
+        mAudioConfig = new AudioConfig();
+        mAudioConfig.streamType = AudioManager.MODE_IN_COMMUNICATION;
+        mAudioConfig.audioSource = MediaRecorder.AudioSource.VOICE_COMMUNICATION;
+        mAudioConfig.sampleRateInHz = 8000;
+        mAudioConfig.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
+        mAudioConfig.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
+        mAudioConfig.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+        mAudioConfig.audioDataIn = new byte[1024];
 
-        updateAudioConfig(config);
+        updateAudioConfig(mAudioConfig);
 
-        mAudioRecorder = new MiniAudioRecorder(config);
-        mAudioTrack = new MiniAudioTrack(config);
-        mAudioFileWriter = new AudioFileWriter(config);
+        mAudioRecorder = new MiniAudioRecorder(mAudioConfig);
+        mAudioTrack = new MiniAudioTrack(mAudioConfig);
+        mAudioFileWriter = new AudioFileWriter(mAudioConfig);
 
         mRecordPlayThread = new AudioRecordPlayThread();
         mRecordPlayThread.start();
@@ -113,6 +115,10 @@ public class AudioRecordPlayer {
         mAudioManager = null;
     }
 
+    protected void processAudioData(AudioConfig audioConfig, int length) {
+        audioConfig.audioDataOut = audioConfig.audioDataIn;
+    }
+
     private class AudioRecordPlayThread extends Thread {
         public AudioRecordPlayThread() {
             super("AudioRecordPlayThread");
@@ -123,14 +129,17 @@ public class AudioRecordPlayer {
         public void run() {
             while (!mReleased) {
                 int length = 0;
-                if (mAudioRecorder != null) {
+                if (mAudioRecorder != null && mAudioRecorder.isRecording()) {
                     length = mAudioRecorder.readAudioData();
                 }
-                if (length != 0 && mAudioTrack != null) {
-                    mAudioTrack.writeAudioData(length);
-                }
-                if (length != 0 && mAudioFileWriter != null) {
-                    mAudioFileWriter.saveRecordData(length);
+                if (length > 0) {
+                    processAudioData(mAudioConfig, length);
+                    if (mAudioTrack != null) {
+                        mAudioTrack.writeAudioData(length);
+                    }
+                    if (mAudioFileWriter != null) {
+                        mAudioFileWriter.saveRecordData(length);
+                    }
                 }
             }
         }
