@@ -149,10 +149,6 @@ public class AudioRecordPlayer {
 
     protected void processAudioData(AudioConfig audioConfig, int length) {
         audioConfig.audioDataOut = audioConfig.audioDataIn;
-
-        if (mListener != null) {
-            mListener.onAudioDataProcessed(audioConfig.audioDataOut);
-        }
     }
 
     private class AudioRecordPlayThread extends Thread {
@@ -170,6 +166,9 @@ public class AudioRecordPlayer {
                 }
                 if (length > 0) {
                     processAudioData(mAudioConfig, length);
+                    if (mListener != null) {
+                        mListener.onAudioDataProcessed(mAudioConfig.audioDataOut);
+                    }
                     if (mTrackEnabled && mAudioTrack != null) {
                         mAudioTrack.writeAudioData(length);
                     }
