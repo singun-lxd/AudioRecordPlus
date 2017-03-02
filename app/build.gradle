@@ -15,7 +15,7 @@ android {
             }
         }
         ndk {
-            abiFilters "armeabi", "armeabi-v7a"
+            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
     }
     buildTypes {
@@ -27,11 +27,6 @@ android {
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
-        }
-    }
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['jniLibs']
         }
     }
 }

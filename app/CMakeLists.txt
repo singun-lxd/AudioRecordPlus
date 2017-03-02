@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(webrtcwrap)
+project(webrtc)
 
 #notice the "recycling" of CMAKE_C_FLAGS
 #this is necessary to pick up android flags
@@ -10,7 +10,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_definitions(-DFIXED_POINT -DUSE_KISS_FFT -DHAVE_CONFIG_H)
 
-add_library(webrtcwrap SHARED
+add_library(webrtc SHARED
 
             src/main/cpp/jni_main.cpp
 
@@ -21,4 +21,4 @@ add_library(webrtcwrap SHARED
 
            )
 
-target_link_libraries(webrtcwrap log m)
+target_link_libraries(webrtc log m)

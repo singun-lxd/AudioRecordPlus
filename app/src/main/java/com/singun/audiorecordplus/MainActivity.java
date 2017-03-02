@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     private AudioRecordPlayerPlus mAudioRecordPlayer;
 
     private SeekBar mVolumeBar;
+    private FloatingActionButton mButtonAction;
     private WaveformView mWaveform;
     private Visualizer mVisualizer;
     private long mLastTime = 0;
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
         initRecord();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mButtonAction = (FloatingActionButton) findViewById(R.id.fab);
+        mButtonAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPermissionRequest.checkPermission();
@@ -135,6 +136,12 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     public void onPermissionAllGranted() {
         startOrStopRecording();
         startVisualiser();
+
+        if (mAudioRecordPlayer.isWorking()) {
+            mButtonAction.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            mButtonAction.setImageResource(android.R.drawable.ic_media_play);
+        }
     }
 
     @Override

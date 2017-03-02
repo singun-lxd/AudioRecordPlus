@@ -10,7 +10,7 @@ public class WebRTCWrapper {
 
     static {
         try {
-            System.loadLibrary("webrtcwrap");
+            System.loadLibrary("webrtc");
         } catch (UnsatisfiedLinkError e) {
             Log.e("TAG", "Couldn't load lib:   - " + e.getMessage());
         }

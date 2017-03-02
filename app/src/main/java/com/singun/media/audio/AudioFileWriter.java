@@ -79,9 +79,13 @@ public class AudioFileWriter {
             length = mAudioConfig.audioDataOut.length;
         }
         try {
+            DataOutputStream dataOutputStream = mOutputStream;
+            if (dataOutputStream == null) {
+                return;
+            }
             for (int i = 0; i < length; i++) {
                 short data = mAudioConfig.audioDataOut[i];
-                mOutputStream.writeShort(data);
+                dataOutputStream.writeShort(data);
             }
         } catch (IOException e) {
             e.printStackTrace();
