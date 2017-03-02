@@ -1,5 +1,7 @@
 package com.singun.media.audio;
 
+import android.text.TextUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,6 +21,9 @@ public class AudioFileWriter {
     }
 
     public boolean createAudioFile(boolean forceCreate) {
+        if (TextUtils.isEmpty(mAudioConfig.audioDirPath) || TextUtils.isEmpty(mAudioConfig.audioName)) {
+            return false;
+        }
         File dir = new File(mAudioConfig.audioDirPath);
         if (dir.isFile()) {
             dir.delete();
