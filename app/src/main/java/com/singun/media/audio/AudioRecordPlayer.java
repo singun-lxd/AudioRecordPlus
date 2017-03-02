@@ -50,7 +50,7 @@ public class AudioRecordPlayer {
 
         mAudioConfig = new AudioConfig();
         mAudioConfig.streamType = AudioManager.MODE_IN_COMMUNICATION;
-        mAudioConfig.audioSource = MediaRecorder.AudioSource.VOICE_COMMUNICATION;
+        mAudioConfig.audioSource = MediaRecorder.AudioSource.MIC;
         mAudioConfig.sampleRateInHz = 8000;
         mAudioConfig.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
         mAudioConfig.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
@@ -97,6 +97,10 @@ public class AudioRecordPlayer {
 
     public boolean isTrackEnabled() {
         return mTrackEnabled;
+    }
+
+    public void setTrackVolume(float volume) {
+        mAudioTrack.setVolume(volume);
     }
 
     public void startWorking() {

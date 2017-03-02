@@ -21,12 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!--波纹视图-->
-    <com.singun.ui.audio.visualizers.WaveformView
-        android:id="@+id/audio_waveform"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton

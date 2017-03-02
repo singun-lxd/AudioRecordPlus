@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     private PermissionRequest mPermissionRequest;
     private AudioRecordPlayerPlus mAudioRecordPlayer;
 
+    private SeekBar mVolumeBar;
     private WaveformView mWaveform;
     private Visualizer mVisualizer;
     private long mLastTime = 0;
@@ -57,9 +59,25 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
             }
         });
 
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText("Hello World");
+        mAudioRecordPlayer.setTrackVolume(0.8f);
+        mVolumeBar = (SeekBar) this.findViewById(R.id.audio_volume);
+        mVolumeBar.setMax(100);
+        mVolumeBar.setProgress(80);
+        mVolumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                float vol = (float) (seekBar.getProgress()) / (float) (seekBar.getMax());
+                mAudioRecordPlayer.setTrackVolume(vol);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+        });
     }
 
     private void initRecord() {

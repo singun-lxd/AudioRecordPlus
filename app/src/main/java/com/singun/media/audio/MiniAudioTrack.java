@@ -1,6 +1,8 @@
 package com.singun.media.audio;
 
+import android.annotation.TargetApi;
 import android.media.AudioTrack;
+import android.os.Build;
 
 /**
  * Created by singun on 2017/3/1 0001.
@@ -59,6 +61,16 @@ public class MiniAudioTrack {
 
     public boolean isPlaying() {
         return mIsPlaying;
+    }
+
+    @SuppressWarnings("deprecation")
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void setVolume(float volume) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mAudioTrack.setVolume(volume);
+        } else {
+            mAudioTrack.setStereoVolume(volume, volume);
+        }
     }
 
     public void release() {
