@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         mPermissionRequest.setPermissionRequestListener(this);
         mAudioRecordPlayer = new AudioRecordPlayerPlus(this, getWindow(), true);
         mAudioRecordPlayer.setSpeakerOn(true);
-        mAudioRecordPlayer.setNoiseProcessEnabled(true);
 //        mAudioRecordPlayer.setAudioProcessListener(this);
     }
 

@@ -1,4 +1,4 @@
-package com.singun.media.audio;
+package com.singun.media.audio.encode;
 
 import java.io.File;
 import java.io.FileInputStream;

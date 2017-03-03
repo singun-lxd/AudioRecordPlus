@@ -6,6 +6,7 @@ import android.view.Window;
 
 import com.singun.media.audio.AudioConfig;
 import com.singun.media.audio.AudioRecordPlayer;
+import com.singun.media.audio.processor.AudioProcessConfig;
 import com.singun.wrapper.WebRTC.WebRTCWrapper;
 
 import java.io.File;
@@ -15,10 +16,6 @@ import java.io.File;
  */
 
 public class AudioRecordPlayerPlus extends AudioRecordPlayer {
-    private WebRTCWrapper mWebRTCWrapper;
-    private boolean mLinkError;
-    private boolean mNoiseProcessEnabled;
-
     public AudioRecordPlayerPlus(Context context, Window window) {
         super(context, window);
     }
@@ -27,50 +24,16 @@ public class AudioRecordPlayerPlus extends AudioRecordPlayer {
         super(context, window, trackEnabled);
     }
 
-    public void setNoiseProcessEnabled(boolean enabled) {
-        mNoiseProcessEnabled = enabled;
-    }
-
-    public boolean isNoiseProcessEnabled() {
-        return mNoiseProcessEnabled;
-    }
-
     @Override
     protected void updateAudioConfig(AudioConfig config) {
         config.audioDirPath = new File(Environment.getExternalStorageDirectory(), "record").getAbsolutePath();
         config.audioName = "testAudio";
-
-        initWebRTC(config);
-    }
-
-    private void initWebRTC(AudioConfig config) {
-        mWebRTCWrapper = new WebRTCWrapper();
-        try {
-            mWebRTCWrapper.init(config.sampleRateInHz);
-        } catch (UnsatisfiedLinkError e) {
-            mLinkError = true;
-            e.printStackTrace();
-        }
     }
 
     @Override
-    protected void processAudioData(AudioConfig audioConfig, int length) {
-        if (mNoiseProcessEnabled && mWebRTCWrapper != null && !mLinkError) {
-            short[] bufferOut = new short[length];
-            System.arraycopy(audioConfig.audioDataIn, 0, bufferOut, 0, length);
-            mWebRTCWrapper.processNoise(bufferOut);
-            audioConfig.audioDataOut = bufferOut;
-        } else {
-            super.processAudioData(audioConfig, length);
-        }
-    }
-
-    @Override
-    public void release() {
-        super.release();
-
-        if (!mLinkError) {
-            mWebRTCWrapper.release();
-        }
+    protected void updateAudioProcessConfig(AudioProcessConfig audioProcessConfig) {
+        audioProcessConfig.noiseSuppress = true;
+        audioProcessConfig.gainControl = false;
+        audioProcessConfig.echoCancel = false;
     }
 }

@@ -3,34 +3,65 @@ package com.singun.wrapper.WebRTC;
 import android.util.Log;
 
 /**
- * Created by hesong on 16/11/17.
+ * Created by singun on 17/3/3 0001.
  */
 
 public class WebRTCWrapper {
+    private boolean mInit;
+    private NoiseSuppress mNoiseSuppress;
 
-    static {
+    public WebRTCWrapper() {
+        mInit = false;
+        mNoiseSuppress = new NoiseSuppress();
+    }
+
+    public boolean init(int sampleRate) {
+        boolean libLoaded = loadWebRTC();
+        if (!libLoaded) {
+            return false;
+        }
+
+        boolean noiseInit = mNoiseSuppress.initNoiseSuppress(sampleRate);
+        if (!noiseInit) {
+            return false;
+        }
+
+        mInit = true;
+        return true;
+    }
+
+    public boolean isInit() {
+        return mInit;
+    }
+
+    private boolean loadWebRTC() {
+        boolean libLoaded = false;
         try {
             System.loadLibrary("webrtc");
+            libLoaded = true;
         } catch (UnsatisfiedLinkError e) {
             Log.e("TAG", "Couldn't load lib:   - " + e.getMessage());
         }
-
+        return libLoaded;
     }
 
-    /**
-     * 初始化降噪设置
-     * @param sampleRate 采样率
-     * @return 是否初始化成功
-     */
-    public native boolean init(int sampleRate);
+    public boolean processNoiseSuppress(short[] data) {
+        return mNoiseSuppress.processNoiseSuppress(data);
+    }
 
-    /**
-     * 处理降噪
-     * @param data
-     * @return
-     */
-    public native boolean processNoise(short[] data);
+    public void release() {
+        mNoiseSuppress.releaseNoiseSuppress();
+    }
 
-    public native void release();
+    public static boolean isSupportNoiseSuppress() {
+        return true;
+    }
 
+    public static boolean isSupportGainControl() {
+        return false;
+    }
+
+    public static boolean isSupportEchoCancel() {
+        return false;
+    }
 }

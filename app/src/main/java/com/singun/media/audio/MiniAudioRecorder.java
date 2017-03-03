@@ -1,6 +1,7 @@
 package com.singun.media.audio;
 
 import android.media.AudioRecord;
+import android.os.Build;
 
 /**
  * Created by singun on 2017/3/1 0001.
@@ -8,7 +9,6 @@ import android.media.AudioRecord;
 
 public class MiniAudioRecorder {
     private AudioConfig mAudioConfig;
-
     private AudioRecord mAudioRecord;
 
     private boolean mIsRecording;
@@ -33,6 +33,13 @@ public class MiniAudioRecorder {
                 minBufferSize);
 
         mAudioConfig.audioDataSize = minBufferSize / 2;
+        if (isSupportRecorderSession()) {
+            mAudioConfig.sessionId = mAudioRecord.getAudioSessionId();
+        }
+    }
+
+    private static boolean isSupportRecorderSession() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
     public void startRecording() {

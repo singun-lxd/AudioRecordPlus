@@ -12,6 +12,7 @@ public class AudioConfig {
     public int channelOutConfig;
     public int audioFormat;
 
+    public int sessionId;
     public int audioDataSize;
     public short[] audioDataIn;
     public short[] audioDataOut;

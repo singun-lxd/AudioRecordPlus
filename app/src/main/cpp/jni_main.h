@@ -8,27 +8,27 @@
 extern "C" {
 #endif
 /*
- * Class:     com_singun_wrapper_WebRTC_WebRTCWrapper
- * Method:    init
+ * Class:     com_singun_wrapper_WebRTC_NoiseSuppress
+ * Method:    initNoiseSuppress
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_singun_wrapper_WebRTC_WebRTCWrapper_init
+JNIEXPORT jboolean JNICALL Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     com_singun_wrapper_WebRTC_WebRTCWrapper
- * Method:    processNoise
+ * Class:     com_singun_wrapper_WebRTC_NoiseSuppress
+ * Method:    processNoiseSuppress
  * Signature: ([S)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_singun_wrapper_WebRTC_WebRTCWrapper_processNoise
+JNIEXPORT jboolean JNICALL Java_com_singun_wrapper_WebRTC_NoiseSuppress_processNoiseSuppress
   (JNIEnv *, jobject, jshortArray);
 
 /*
- * Class:     com_singun_wrapper_WebRTC_WebRTCWrapper
- * Method:    release
+ * Class:     com_singun_wrapper_WebRTC_NoiseSuppress
+ * Method:    releaseNoiseSuppress
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_singun_wrapper_WebRTC_WebRTCWrapper_release
+JNIEXPORT void JNICALL Java_com_singun_wrapper_WebRTC_NoiseSuppress_releaseNoiseSuppress
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

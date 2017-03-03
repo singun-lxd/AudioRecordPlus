@@ -2,13 +2,14 @@ package com.singun.media.audio;
 
 import android.text.TextUtils;
 
+import com.singun.media.audio.encode.AudioEncodeUtil;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Created by singun on 2017/3/1 0001.

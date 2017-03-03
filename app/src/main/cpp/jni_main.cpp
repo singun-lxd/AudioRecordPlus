@@ -24,7 +24,7 @@ void innerProcess(short in_sample[], short out_sample[], int length){
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_singun_wrapper_WebRTC_WebRTCWrapper_init(JNIEnv *env, jobject instance, jint sample_rate) {
+Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress(JNIEnv *env, jobject instance, jint sample_rate) {
 
     handle = (NsHandle *) audio_ns_init(sample_rate);
 
@@ -32,7 +32,7 @@ Java_com_singun_wrapper_WebRTC_WebRTCWrapper_init(JNIEnv *env, jobject instance,
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_singun_wrapper_WebRTC_WebRTCWrapper_processNoise(JNIEnv *env, jobject instance, jshortArray sample) {
+Java_com_singun_wrapper_WebRTC_NoiseSuppress_processNoiseSuppress(JNIEnv *env, jobject instance, jshortArray sample) {
 
     if(!handle)
         return false;
@@ -54,7 +54,7 @@ Java_com_singun_wrapper_WebRTC_WebRTCWrapper_processNoise(JNIEnv *env, jobject i
 }
 
 JNIEXPORT void JNICALL
-Java_com_singun_wrapper_WebRTC_WebRTCWrapper_release(JNIEnv *env, jobject instance) {
+Java_com_singun_wrapper_WebRTC_NoiseSuppress_releaseNoiseSuppress(JNIEnv *env, jobject instance) {
 
     if(handle){
         audio_ns_destroy((int) handle);

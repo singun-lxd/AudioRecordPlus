@@ -1,11 +1,15 @@
 package com.singun.media.audio;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
-import android.support.annotation.CallSuper;
+import android.os.Build;
 import android.view.Window;
+
+import com.singun.media.audio.processor.AudioProcessConfig;
+import com.singun.media.audio.processor.AudioProcessor;
 
 /**
  * Created by singun on 2017/3/1 0001.
@@ -20,6 +24,7 @@ public class AudioRecordPlayer {
     private MiniAudioRecorder mAudioRecorder;
     private MiniAudioTrack mAudioTrack;
     private AudioFileWriter mAudioFileWriter;
+    private AudioProcessor mAudioProcessor;
     private AudioConfig mAudioConfig;
     private Thread mRecordPlayThread;
 
@@ -43,6 +48,7 @@ public class AudioRecordPlayer {
         init();
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void init() {
         if (mCurrentWindow != null) {
             mCurrentWindow.setVolumeControlStream(AUDIO_MODE);
@@ -50,7 +56,7 @@ public class AudioRecordPlayer {
 
         mAudioConfig = new AudioConfig();
         mAudioConfig.streamType = AudioManager.MODE_IN_COMMUNICATION;
-        mAudioConfig.audioSource = MediaRecorder.AudioSource.MIC;
+        mAudioConfig.audioSource = MediaRecorder.AudioSource.VOICE_COMMUNICATION;
         mAudioConfig.sampleRateInHz = 8000;
         mAudioConfig.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
         mAudioConfig.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
@@ -64,11 +70,24 @@ public class AudioRecordPlayer {
 
         mAudioConfig.audioDataIn = new short[mAudioConfig.audioDataSize];
 
+        AudioProcessConfig audioProcessConfig = new AudioProcessConfig();
+        audioProcessConfig.sessionId = mAudioConfig.sessionId;
+        audioProcessConfig.noiseSuppress = true;
+        audioProcessConfig.echoCancel = true;
+        audioProcessConfig.gainControl = true;
+
+        updateAudioProcessConfig(audioProcessConfig);
+        mAudioProcessor = new AudioProcessor(mAudioConfig, audioProcessConfig);
+
         mRecordPlayThread = new AudioRecordPlayThread();
         mRecordPlayThread.start();
     }
 
     protected void updateAudioConfig(AudioConfig config) {
+
+    }
+
+    protected void updateAudioProcessConfig(AudioProcessConfig audioProcessConfig) {
 
     }
 
@@ -102,6 +121,31 @@ public class AudioRecordPlayer {
 
     public void setTrackVolume(float volume) {
         mAudioTrack.setVolume(volume);
+    }
+
+
+    public void setNoiseSuppressEnabled(boolean enabled) {
+        mAudioProcessor.setNoiseSuppressEnabled(enabled);
+    }
+
+    public boolean isNoiseSuppressEnabled() {
+        return mAudioProcessor.isNoiseSuppressEnabled();
+    }
+
+    public void setGainControlEnabled(boolean enabled) {
+        mAudioProcessor.setGainControlEnabled(enabled);
+    }
+
+    public boolean isGainControlEnabled() {
+        return mAudioProcessor.isGainControlEnabled();
+    }
+
+    public void setEchoCancelEnabled(boolean enabled) {
+        mAudioProcessor.setEchoCancelEnabled(enabled);
+    }
+
+    public boolean isEchoCancelEnabled() {
+        return mAudioProcessor.isEchoCancelEnabled();
     }
 
     public void startWorking() {
@@ -145,15 +189,19 @@ public class AudioRecordPlayer {
         mAudioRecorder.release();
         mAudioTrack.release();
         mAudioFileWriter.release();
+        mAudioProcessor.release();
         mAudioRecorder = null;
         mAudioTrack = null;
         mAudioFileWriter = null;
+        mAudioProcessor = null;
         mCurrentWindow = null;
         mAudioManager = null;
     }
 
     protected void processAudioData(AudioConfig audioConfig, int length) {
-        audioConfig.audioDataOut = audioConfig.audioDataIn;
+        if (!mAudioProcessor.processAudioData(audioConfig, length)) {
+            audioConfig.audioDataOut = audioConfig.audioDataIn;
+        }
     }
 
     private class AudioRecordPlayThread extends Thread {
