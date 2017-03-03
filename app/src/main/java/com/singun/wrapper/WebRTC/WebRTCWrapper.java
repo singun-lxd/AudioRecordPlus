@@ -21,7 +21,7 @@ public class WebRTCWrapper {
             return false;
         }
 
-        boolean noiseInit = mNoiseSuppress.initNoiseSuppress(sampleRate);
+        boolean noiseInit = mNoiseSuppress.init(sampleRate);
         if (!noiseInit) {
             return false;
         }
@@ -45,12 +45,12 @@ public class WebRTCWrapper {
         return libLoaded;
     }
 
-    public boolean processNoiseSuppress(short[] data) {
-        return mNoiseSuppress.processNoiseSuppress(data);
+    public void processNoiseSuppress(short[] data) {
+        mNoiseSuppress.process(data);
     }
 
     public void release() {
-        mNoiseSuppress.releaseNoiseSuppress();
+        mNoiseSuppress.release();
     }
 
     public static boolean isSupportNoiseSuppress() {
