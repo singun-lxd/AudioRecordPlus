@@ -39,7 +39,7 @@ void WebRtcSpl_FreeRealFFT(struct RealFFT* self) {
 // WebRtcSpl_ComplexFFT and WebRtcSpl_ComplexIFFT use in-place algorithm,
 // so copy data from data_in to data_out in the next two functions.
 
-int WebRtcSpl_RealForwardFFTC(struct RealFFT* self,
+int WebRtcSpl_RealForwardFFT(struct RealFFT* self,
                               const int16_t* data_in,
                               int16_t* data_out) {
   memcpy(data_out, data_in, sizeof(int16_t) * (1 << (self->order + 1)));
@@ -47,7 +47,7 @@ int WebRtcSpl_RealForwardFFTC(struct RealFFT* self,
   return WebRtcSpl_ComplexFFT(data_out, self->order, 1);
 }
 
-int WebRtcSpl_RealInverseFFTC(struct RealFFT* self,
+int WebRtcSpl_RealInverseFFT(struct RealFFT* self,
                               const int16_t* data_in,
                               int16_t* data_out) {
   memcpy(data_out, data_in, sizeof(int16_t) * (1 << (self->order + 1)));

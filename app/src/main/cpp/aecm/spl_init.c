@@ -28,10 +28,8 @@ MinValueW32 WebRtcSpl_MinValueW32;
 CrossCorrelation WebRtcSpl_CrossCorrelation;
 DownsampleFast WebRtcSpl_DownsampleFast;
 ScaleAndAddVectorsWithRound WebRtcSpl_ScaleAndAddVectorsWithRound;
-#ifdef FFT_DEFINE
-RealForwardFFT WebRtcSpl_RealForwardFFT;
-RealInverseFFT WebRtcSpl_RealInverseFFT;
-#endif
+//RealForwardFFT WebRtcSpl_RealForwardFFT;
+//RealInverseFFT WebRtcSpl_RealInverseFFT;
 
 #if (defined(WEBRTC_DETECT_ARM_NEON) || !defined(WEBRTC_ARCH_ARM_NEON)) && \
      !defined(MIPS32_LE)
@@ -47,10 +45,8 @@ static void InitPointersToC() {
   WebRtcSpl_DownsampleFast = WebRtcSpl_DownsampleFastC;
   WebRtcSpl_ScaleAndAddVectorsWithRound =
       WebRtcSpl_ScaleAndAddVectorsWithRoundC;
-#ifdef FFT_DEFINE
-  WebRtcSpl_RealForwardFFT = WebRtcSpl_RealForwardFFTC;
-  WebRtcSpl_RealInverseFFT = WebRtcSpl_RealInverseFFTC;
-#endif
+//  WebRtcSpl_RealForwardFFT = WebRtcSpl_RealForwardFFTC;
+//  WebRtcSpl_RealInverseFFT = WebRtcSpl_RealInverseFFTC;
 }
 #endif
 
@@ -109,6 +105,13 @@ static void InitFunctionPointers(void) {
   InitPointersToC();
 #endif  /* WEBRTC_DETECT_ARM_NEON */
 }
+
+#if (defined(WEBRTC_DETECT_ARM_NEON) || !defined(WEBRTC_ARCH_ARM_NEON)) && \
+     !defined(MIPS32_LE)
+static void once(void (*func)(void)) {
+    func();
+}
+#endif
 
 #if defined(WEBRTC_POSIX)
 #include <pthread.h>

@@ -47,7 +47,13 @@ public class MiniAudioRecorder {
             return;
         }
 
-        mAudioRecord.startRecording();
+        try {
+            mAudioRecord.startRecording();
+        } catch (IllegalStateException e) {
+            mAudioRecord.release();
+            init();
+            mAudioRecord.startRecording();
+        }
 
         mIsRecording = true;
     }

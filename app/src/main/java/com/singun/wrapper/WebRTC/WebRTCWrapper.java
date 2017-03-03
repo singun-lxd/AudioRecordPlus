@@ -9,10 +9,12 @@ import android.util.Log;
 public class WebRTCWrapper {
     private boolean mInit;
     private NoiseSuppress mNoiseSuppress;
+    private EchoCancel mEchoCancel;
 
     public WebRTCWrapper() {
         mInit = false;
         mNoiseSuppress = new NoiseSuppress();
+        mEchoCancel = new EchoCancel();
     }
 
     public boolean init(int sampleRate) {
@@ -23,6 +25,10 @@ public class WebRTCWrapper {
 
         boolean noiseInit = mNoiseSuppress.init(sampleRate);
         if (!noiseInit) {
+            return false;
+        }
+        boolean echoCancel = mEchoCancel.init(sampleRate);
+        if (!echoCancel) {
             return false;
         }
 
@@ -45,12 +51,17 @@ public class WebRTCWrapper {
         return libLoaded;
     }
 
-    public void processNoiseSuppress(short[] data) {
-        mNoiseSuppress.process(data);
+    public short[] processNoiseSuppress(short[] data) {
+        return mNoiseSuppress.process(data);
+    }
+
+    public short[] processEchoCancel(short[] nearendNoisy ,short[] nearendClean) {
+        return mEchoCancel.process(nearendNoisy, nearendClean);
     }
 
     public void release() {
         mNoiseSuppress.release();
+        mEchoCancel.release();
     }
 
     public static boolean isSupportNoiseSuppress() {
@@ -62,6 +73,6 @@ public class WebRTCWrapper {
     }
 
     public static boolean isSupportEchoCancel() {
-        return false;
+        return true;
     }
 }

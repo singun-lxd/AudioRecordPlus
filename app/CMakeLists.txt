@@ -18,23 +18,23 @@ add_library(webrtc SHARED
             src/main/cpp/ns/fft4g.c
             src/main/cpp/ns/noise_suppression.c
 
-            #src/main/cpp/aecm/aecm_main.c
-            #src/main/cpp/aecm/aecm_core.c
-            #src/main/cpp/aecm/complex_bit_reverse.c
-            #src/main/cpp/aecm/complex_fft.c
-            #src/main/cpp/aecm/delay_estimator_wrapper.c
-            #src/main/cpp/aecm/delay_estimator.c
-            #src/main/cpp/aecm/division_operations.c
-            #src/main/cpp/aecm/echo_control_mobile.c
-            #src/main/cpp/aecm/min_max_operations.c
-            #src/main/cpp/aecm/randomization_functions.c
-            #src/main/cpp/aecm/ring_buffer.c
-            #src/main/cpp/aecm/spl_sqrt_floor.c
-            #src/main/cpp/aecm/spl_init.c
-            #src/main/cpp/aecm/real_fft.c
-            #src/main/cpp/aecm/cross_correlation.c
-            #src/main/cpp/aecm/downsample_fast.c
-            #src/main/cpp/aecm/vector_scaling_operations.c
+            src/main/cpp/aecm/aecm_jni_main.c
+            src/main/cpp/aecm/aecm_core.c
+            src/main/cpp/aecm/complex_bit_reverse.c
+            src/main/cpp/aecm/complex_fft.c
+            src/main/cpp/aecm/delay_estimator_wrapper.c
+            src/main/cpp/aecm/delay_estimator.c
+            src/main/cpp/aecm/division_operations.c
+            src/main/cpp/aecm/echo_control_mobile.c
+            src/main/cpp/aecm/min_max_operations.c
+            src/main/cpp/aecm/randomization_functions.c
+            src/main/cpp/aecm/ring_buffer.c
+            src/main/cpp/aecm/spl_sqrt_floor.c
+            src/main/cpp/aecm/spl_init.c
+            src/main/cpp/aecm/real_fft.c
+            src/main/cpp/aecm/cross_correlation.c
+            src/main/cpp/aecm/downsample_fast.c
+            src/main/cpp/aecm/vector_scaling_operations.c
            )
 
 target_link_libraries(webrtc log m)

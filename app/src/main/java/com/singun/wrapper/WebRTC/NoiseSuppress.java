@@ -12,8 +12,8 @@ class NoiseSuppress {
         return mHandle != 0;
     }
 
-    public void process(short[] data) {
-        processNoiseSuppress(mHandle, data);
+    public short[] process(short[] data) {
+        return processNoiseSuppress(mHandle, data);
     }
 
     public void release() {

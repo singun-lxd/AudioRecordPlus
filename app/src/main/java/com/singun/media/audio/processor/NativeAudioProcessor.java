@@ -31,12 +31,12 @@ class NativeAudioProcessor {
 
     public boolean processAudioData(AudioConfig audioConfig, int length) {
         if (needProcessData()) {
-            short[] bufferOut = new short[length];
-            System.arraycopy(audioConfig.audioDataIn, 0, bufferOut, 0, length);
+            short[] bufferCopy = new short[length];
+            System.arraycopy(audioConfig.audioDataIn, 0, bufferCopy, 0, length);
 
-            processData(bufferOut);
+            short[] bufferResult = processData(bufferCopy);
 
-            audioConfig.audioDataOut = bufferOut;
+            audioConfig.audioDataOut = bufferResult;
 
             return true;
         } else {
@@ -50,11 +50,16 @@ class NativeAudioProcessor {
                 (mAudioProcessConfig.echoCancel && NativeAudioProcessorSupport.isSupportEchoCanceler());
     }
 
-    private void processData(short[] data) {
+    private short[] processData(short[] data) {
+        short[] dataOut = null;
         if (mAudioProcessConfig.noiseSuppress) {
-            mWebRTCWrapper.processNoiseSuppress(data);
+            dataOut = mWebRTCWrapper.processNoiseSuppress(data);
         }
-        //// TODO: 2017/3/3 0003 GainControl && EchoCanceler 
+        if (mAudioProcessConfig.echoCancel) {
+            dataOut = mWebRTCWrapper.processEchoCancel(data, dataOut);
+        }
+        //// TODO: 2017/3/3 0003 GainControl
+        return dataOut;
     }
 
     public void release() {

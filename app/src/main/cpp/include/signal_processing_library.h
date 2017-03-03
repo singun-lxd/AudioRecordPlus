@@ -1747,9 +1747,8 @@ void WebRtcSpl_SynthesisQMF(const int16_t* low_band,
 //                          written to.
 //
 
-
-// for compile
-
+// for compile, add by singun
+//struct RealFFT;
 //typedef int (*RealForwardFFT)(struct RealFFT* self,
 //                              const int16_t* real_data_in,
 //                              int16_t* complex_data_out);
