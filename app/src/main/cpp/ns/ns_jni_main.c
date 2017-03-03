@@ -1,5 +1,5 @@
-#include "ns_main.h"
-#include "audio_ns.h"
+#include "ns_jni_main.h"
+#include "ns_wrap.h"
 #include "noise_suppression.h"
 
 #ifdef __cplusplus
@@ -11,11 +11,8 @@ void innerProcess(int handle, short in_sample[], short out_sample[], int length)
     int curPosition = 0;
 
     while(curPosition < length){
-
-        audio_ns_process((int) handle, in_sample + curPosition, out_sample + curPosition);
-
+        NsWrap_Process((int) handle, in_sample + curPosition, out_sample + curPosition);
         curPosition += 160;
-
     }
 
 }
@@ -23,9 +20,9 @@ void innerProcess(int handle, short in_sample[], short out_sample[], int length)
 JNIEXPORT jint JNICALL
 Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress(JNIEnv *env, jobject instance, jint sample_rate) {
 
-    NsHandle* handle = (NsHandle *) audio_ns_init(sample_rate);
+    NsHandle* handle = (NsHandle *) NsWrap_Init(sample_rate);
 
-    return handle;
+    return (int) handle;
 }
 
 JNIEXPORT jshortArray JNICALL
@@ -50,11 +47,11 @@ Java_com_singun_wrapper_WebRTC_NoiseSuppress_processNoiseSuppress(JNIEnv *env, j
 JNIEXPORT void JNICALL
 Java_com_singun_wrapper_WebRTC_NoiseSuppress_releaseNoiseSuppress(JNIEnv *env, jobject instance, jint handle) {
 
-    if(handle){
-        audio_ns_destroy((int) handle);
+    if (handle) {
+        NsWrap_Destroy((int) handle);
     }
-
 }
+
 #ifdef __cplusplus
 }
 #endif

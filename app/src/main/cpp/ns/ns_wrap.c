@@ -1,9 +1,9 @@
-#include "audio_ns.h"
+#include "ns_wrap.h"
 #include "noise_suppression.h"
 
 #include <stdio.h>
 
-int audio_ns_init(int sample_rate){
+int NsWrap_Init(int sample_rate){
 
 	NsHandle* NS_instance;
 	int ret;
@@ -25,7 +25,7 @@ int audio_ns_init(int sample_rate){
 }
 
 
-int audio_ns_process(int ns_handle ,  short *src_audio_data ,short *dest_audio_data){
+int NsWrap_Process(int ns_handle, short *src_audio_data, short *dest_audio_data){
 	//get handle
 	NsHandle* NS_instance = (NsHandle* )ns_handle;
 
@@ -41,6 +41,6 @@ int audio_ns_process(int ns_handle ,  short *src_audio_data ,short *dest_audio_d
 }
 
 
-void audio_ns_destroy(int ns_handle){
-	WebRtcNs_Free((NsHandle *) ns_handle);
+void NsWrap_Destroy(int ns_handle){
+    WebRtcNs_Free((NsHandle *) ns_handle);
 }

@@ -12,11 +12,11 @@ add_definitions(-DFIXED_POINT -DUSE_KISS_FFT -DHAVE_CONFIG_H)
 
 add_library(webrtc SHARED
 
-            src/main/cpp/ns/ns_main.c
-            src/main/cpp/ns/audio_ns.c
+            src/main/cpp/ns/ns_jni_main.c
+            src/main/cpp/ns/ns_wrap.c
+            src/main/cpp/ns/ns_core.c
             src/main/cpp/ns/fft4g.c
             src/main/cpp/ns/noise_suppression.c
-            src/main/cpp/ns/ns_core.c
 
             #src/main/cpp/aecm/aecm_main.c
             #src/main/cpp/aecm/aecm_core.c

@@ -1,4 +1,4 @@
-#include "aecm_main.h"
+#include "aecm_jni_main.h"
 #include <android/log.h>
 #include "echo_control_mobile.h"
 
