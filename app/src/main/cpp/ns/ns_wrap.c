@@ -5,18 +5,18 @@
 
 int NsWrap_Init(int sample_rate){
 
-	NsHandle* NS_instance;
-	int ret;
-	if ((ret = WebRtcNs_Create(&NS_instance) )) {
-		printf("WebRtcNs_Create failed with error code = %d", ret);
-		return ret;
+    int ret = -1;
+	NsHandle* NS_instance = WebRtcNs_Create();
+	if (NS_instance == NULL) {
+		printf("WebRtcNs_Create failed, null instance returned");
+		return -1;
 	}
 	if ((ret = WebRtcNs_Init(NS_instance, sample_rate) )) {
 		printf("WebRtcNs_Init failed with error code = %d", ret);
 		return ret;
 	}
 
-	if ( ( ret =  WebRtcNs_set_policy(NS_instance, 2) ) ){
+	if (( ret = WebRtcNs_set_policy(NS_instance, 2))){
 		printf("WebRtcNs_set_policy failed with error code = %d", ret);
 		return ret;
 	}
@@ -30,12 +30,7 @@ int NsWrap_Process(int ns_handle, short *src_audio_data, short *dest_audio_data)
 	NsHandle* NS_instance = (NsHandle* )ns_handle;
 
 	//noise suppression
-	if(
-		WebRtcNs_Process(NS_instance ,src_audio_data ,NULL ,dest_audio_data , NULL) ||
-		WebRtcNs_Process(NS_instance ,&src_audio_data[80] ,NULL ,&dest_audio_data[80] , NULL) ){
-			printf("WebRtcNs_Process failed with error code = " );
-			return -1;
-	}
+    WebRtcNs_Process(NS_instance, src_audio_data, 1, dest_audio_data);
 
 	return 0;
 }

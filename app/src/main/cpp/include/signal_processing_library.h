@@ -19,6 +19,7 @@
 #define WEBRTC_SPL_SIGNAL_PROCESSING_LIBRARY_H_
 
 #include <string.h>
+//#include "webrtc/typedefs.h"
 #include "typedefs.h"
 
 // Macros specific for the fixed point implementation
@@ -159,6 +160,7 @@ extern "C" {
   memmove(v1, v2, (length) * sizeof(int16_t))
 
 // inline functions:
+//#include "webrtc/common_audio/signal_processing/include/spl_inl.h"
 #include "spl_inl.h"
 
 // Initialize SPL. Currently it contains only function pointer initialization.
@@ -1746,21 +1748,3 @@ void WebRtcSpl_SynthesisQMF(const int16_t* low_band,
 //      - version         : Pointer to a buffer where the version number is
 //                          written to.
 //
-
-// for compile, add by singun
-//struct RealFFT;
-//typedef int (*RealForwardFFT)(struct RealFFT* self,
-//                              const int16_t* real_data_in,
-//                              int16_t* complex_data_out);
-//extern RealForwardFFT WebRtcSpl_RealForwardFFT;
-//int WebRtcSpl_RealForwardFFTC(struct RealFFT* self,
-//                              const int16_t* real_data_in,
-//                              int16_t* complex_data_out);
-//
-//typedef int (*RealInverseFFT)(struct RealFFT* self,
-//                              const int16_t* complex_data_in,
-//                              int16_t* real_data_out);
-//extern RealInverseFFT WebRtcSpl_RealInverseFFT;
-//int WebRtcSpl_RealInverseFFTC(struct RealFFT* self,
-//                             const int16_t* complex_data_in,
-//                             int16_t* real_data_out);

@@ -8,10 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_FFT4G_H_
-#define WEBRTC_MODULES_AUDIO_PROCESSING_UTILITY_FFT4G_H_
+#ifndef WEBRTC_COMMON_AUDIO_FFT4G_H_
+#define WEBRTC_COMMON_AUDIO_FFT4G_H_
 
-void WebRtc_rdft(int, int, float *, int *, float *);
-void WebRtc_cdft(int, int, float *, int *, float *);
-
+#if defined(__cplusplus)
+extern "C" {
 #endif
+
+// Refer to fft4g.c for documentation.
+void WebRtc_rdft(size_t n, int isgn, float *a, size_t *ip, float *w);
+
+#if defined(__cplusplus)
+}
+#endif
+
+#endif  // WEBRTC_COMMON_AUDIO_FFT4G_H_
