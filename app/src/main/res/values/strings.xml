@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AudioRecordPlus</string>
+    <string name="app_name">Audio Record Plus</string>
     <string name="action_settings">Settings</string>
     <string name="dialog_title_permission_denied">Permission Denied</string>
     <string name="dialog_content_permission_denied">Please try again and allow permission request in dialog.</string>
