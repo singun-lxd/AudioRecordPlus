@@ -7,13 +7,13 @@ package com.singun.wrapper.WebRTC;
 class NoiseSuppress {
     private int mHandle;
 
-    public boolean init(int sampleRate) {
-        mHandle = initNoiseSuppress(sampleRate);
+    public boolean init(int mode, int sampleRate) {
+        mHandle = initNoiseSuppress(mode, sampleRate);
         return mHandle != 0;
     }
 
-    public short[] process(short[] data) {
-        return processNoiseSuppress(mHandle, data);
+    public short[] process(short[] data, int length) {
+        return processNoiseSuppress(mHandle, data, length);
     }
 
     public void release() {
@@ -26,14 +26,14 @@ class NoiseSuppress {
      * @param sampleRate 采样率
      * @return 是否初始化成功
      */
-    private native int initNoiseSuppress(int sampleRate);
+    private native int initNoiseSuppress(int mode, int sampleRate);
 
     /**
      * 处理降噪
      * @param data
      * @return
      */
-    private native short[] processNoiseSuppress(int handle, short[] data);
+    private native short[] processNoiseSuppress(int handle, short[] data, int length);
 
     private native void releaseNoiseSuppress(int handle);
 }

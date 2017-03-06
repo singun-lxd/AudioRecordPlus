@@ -7,6 +7,8 @@ import android.util.Log;
  */
 
 public class WebRTCWrapper {
+    private static final int NS_MODE = 2;
+
     private boolean mInit;
     private NoiseSuppress mNoiseSuppress;
     private EchoCancel mEchoCancel;
@@ -23,7 +25,7 @@ public class WebRTCWrapper {
             return false;
         }
 
-        boolean noiseInit = mNoiseSuppress.init(sampleRate);
+        boolean noiseInit = mNoiseSuppress.init(NS_MODE, sampleRate);
         if (!noiseInit) {
             return false;
         }
@@ -51,8 +53,8 @@ public class WebRTCWrapper {
         return libLoaded;
     }
 
-    public short[] processNoiseSuppress(short[] data) {
-        return mNoiseSuppress.process(data);
+    public short[] processNoiseSuppress(short[] data, int length) {
+        return mNoiseSuppress.process(data, length);
     }
 
     public short[] processEchoCancel(short[] nearendNoisy ,short[] nearendClean) {

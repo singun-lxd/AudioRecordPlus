@@ -34,7 +34,7 @@ class NativeAudioProcessor {
             short[] bufferCopy = new short[length];
             System.arraycopy(audioConfig.audioDataIn, 0, bufferCopy, 0, length);
 
-            short[] bufferResult = processData(bufferCopy);
+            short[] bufferResult = processData(bufferCopy, length);
 
             audioConfig.audioDataOut = bufferResult;
 
@@ -50,10 +50,10 @@ class NativeAudioProcessor {
                 (mAudioProcessConfig.echoCancel && NativeAudioProcessorSupport.isSupportEchoCanceler());
     }
 
-    private short[] processData(short[] data) {
+    private short[] processData(short[] data, int length) {
         short[] dataOut = null;
         if (mAudioProcessConfig.noiseSuppress) {
-            dataOut = mWebRTCWrapper.processNoiseSuppress(data);
+            dataOut = mWebRTCWrapper.processNoiseSuppress(data, length);
         }
         if (mAudioProcessConfig.echoCancel) {
             dataOut = mWebRTCWrapper.processEchoCancel(data, dataOut);
