@@ -58,7 +58,9 @@ class NativeAudioProcessor {
         if (mAudioProcessConfig.echoCancel) {
             dataOut = mWebRTCWrapper.processEchoCancel(data, dataOut);
         }
-        //// TODO: 2017/3/3 0003 GainControl
+        if (mAudioProcessConfig.gainControl) {
+            dataOut = mWebRTCWrapper.processGainControl(dataOut, length);
+        }
         return dataOut;
     }
 

@@ -27,28 +27,19 @@ ns_wrapper::~ns_wrapper() {
     free_buffer((void**)nsOut);
 }
 
-void ns_wrapper:: reset_data() {
-    int iBand;
-    for(iBand = 0; iBand < nBands; iBand++) {
-        memset(nsIn[iBand], 0, frameSh*sizeof(float));
-        memset(nsOut[iBand], 0, frameSh*sizeof(float));
-    }
-    memset(temp, 0, BUFFERSIZE*sizeof(short));
-}
-
 /*
  *input:
  *    sampleHz 采样率，只支持8k/16k/32k/48k
  *output:
  *    int      0-success，1-fail
  */
-int ns_wrapper::ns_init(int nsMode, int sampleHz) {
+int ns_wrapper::ns_init(int sampleHz, int mode) {
     if (base_wrapper::init(sampleHz) < 0) {
         return -1;
     }
     int status, iBand;
-    if(nsMode < 0 || nsMode > 3) {
-        fprintf(stderr, "[NsInit]: only support nsMode 0 1 2 3\n");
+    if(mode < 0 || mode > 3) {
+        fprintf(stderr, "[NsInit]: only support mode 0 1 2 3\n");
         return -1;
     }
     ns = WebRtcNs_Create();
@@ -57,7 +48,7 @@ int ns_wrapper::ns_init(int nsMode, int sampleHz) {
         fprintf(stderr, "[NsInit]: failed in WebRtcNs_Init\n");
         return -1;
     }
-    status = WebRtcNs_set_policy((NsHandle*)ns, nsMode);
+    status = WebRtcNs_set_policy((NsHandle*)ns, mode);
     if(status != 0) {
         fprintf(stderr, "[NsInit]: failed in WebRtcNs_set_policy\n");
         return -1;
@@ -94,6 +85,15 @@ int ns_wrapper::ns_proc(short *output, int pcmLen) {
         }
     }
     return 0;
+}
+
+void ns_wrapper:: reset_data() {
+    int iBand;
+    for(iBand = 0; iBand < nBands; iBand++) {
+        memset(nsIn[iBand], 0, frameSh*sizeof(float));
+        memset(nsOut[iBand], 0, frameSh*sizeof(float));
+    }
+    memset(temp, 0, BUFFERSIZE*sizeof(short));
 }
 
 

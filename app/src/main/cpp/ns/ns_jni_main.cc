@@ -6,9 +6,9 @@ extern "C" {
 #endif
 
 JNIEXPORT jint JNICALL
-Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress(JNIEnv *env, jobject instance, jint mode, jint sample_rate) {
+Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress(JNIEnv *env, jobject instance, jint sample_rate, jint mode) {
     ns_wrapper* wrapper = new ns_wrapper();
-    int init = wrapper->ns_init(mode, sample_rate);
+    int init = wrapper->ns_init(sample_rate, mode);
     if (init != 0) {
         delete wrapper;
         return 0;

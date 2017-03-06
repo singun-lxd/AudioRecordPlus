@@ -7,8 +7,8 @@ package com.singun.wrapper.WebRTC;
 class NoiseSuppress {
     private int mHandle;
 
-    public boolean init(int mode, int sampleRate) {
-        mHandle = initNoiseSuppress(mode, sampleRate);
+    public boolean init(int sampleRate, int mode) {
+        mHandle = initNoiseSuppress(sampleRate, mode);
         return mHandle != 0;
     }
 
@@ -24,9 +24,10 @@ class NoiseSuppress {
     /**
      * 初始化降噪设置
      * @param sampleRate 采样率
+     * @param mode 模式 0 1 2 3，级别越高降噪效果越好，一般设置为2
      * @return 是否初始化成功
      */
-    private native int initNoiseSuppress(int mode, int sampleRate);
+    private native int initNoiseSuppress(int sampleRate, int mode);
 
     /**
      * 处理降噪

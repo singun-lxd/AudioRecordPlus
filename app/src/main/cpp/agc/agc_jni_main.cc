@@ -1,0 +1,50 @@
+#include "agc_jni_main.h"
+#include "agc_wrapper.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+JNIEXPORT jint JNICALL
+Java_com_singun_wrapper_WebRTC_GainControl_initGainControl(JNIEnv *env, jobject instance, int sampleRate, int db, int dbfs) {
+    agc_wrapper* wrapper = new agc_wrapper();
+    int init = wrapper->agc_init(db, dbfs);
+    if (init != 0) {
+        delete wrapper;
+        return 0;
+    }
+    return (int) wrapper;
+}
+
+JNIEXPORT jshortArray JNICALL
+Java_com_singun_wrapper_WebRTC_GainControl_processGainControl(JNIEnv *env, jobject instance, jint handle, jshortArray sample, jint length) {
+
+    jsize arrLen = env->GetArrayLength(sample);
+
+    jshort *sam = env->GetShortArrayElements(sample, 0);
+
+    short in_sample[arrLen];
+    for(int i=0; i<arrLen; i++){
+        in_sample[i] = sam[i];
+    }
+
+    agc_wrapper* wrapper = (agc_wrapper*) handle;
+    wrapper->agc_proc(in_sample, length);
+
+    env->ReleaseShortArrayElements(sample, sam, 0);
+
+    return sample;
+}
+
+JNIEXPORT void JNICALL
+Java_com_singun_wrapper_WebRTC_GainControl_releaseGainControl(JNIEnv *env, jobject instance, jint handle) {
+
+    if (handle) {
+        agc_wrapper* wrapper = (agc_wrapper*) handle;
+        delete wrapper;
+    }
+}
+
+#ifdef __cplusplus
+}
+#endif
