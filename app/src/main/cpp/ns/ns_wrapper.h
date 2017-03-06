@@ -17,15 +17,13 @@ public:
     ~ns_wrapper();
 
     int ns_init(int nsMode, int mode);
-    int ns_proc(short *input, int pcmLen);
+    int ns_proc(const short* input, short *output, int pcmLen);
 private:
     void reset_data();
 
     void* ns;       //ns instance
     float **nsIn;   //ns input[band][data]
     float **nsOut;  //ns output[band][data]
-    // temp result
-    short *temp;    //temp: used to store result from last step
 };
 
 #ifdef __cplusplus

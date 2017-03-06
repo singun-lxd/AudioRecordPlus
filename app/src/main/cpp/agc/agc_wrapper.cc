@@ -11,17 +11,12 @@ agc_wrapper::agc_wrapper() {
     agc        = NULL;
     agcIn      = NULL;
     agcOut     = NULL;
-    temp       = NULL;
 }
 
 agc_wrapper::~agc_wrapper() {
     if(agc != NULL) {
         WebRtcAgc_Free(agc);
         agc = NULL;
-    }
-    if (temp != NULL) {
-        free(temp);
-        temp = NULL;
     }
     free_buffer((void**)agcIn);
     free_buffer((void**)agcOut);
@@ -47,8 +42,7 @@ int agc_wrapper::agc_init(int agcDb, int agcDbfs) {
     int maxLevel = 255;
     int agcMode  = kAgcModeFixedDigital;
     status = WebRtcAgc_Init(agc, minLevel, maxLevel, agcMode, sampleHz);
-    if(status != 0)
-    {
+    if(status != 0) {
         fprintf(stderr, "[AgcInit]: failed in WebRtcAgc_Init\n");
         return -1;
     }
@@ -57,22 +51,20 @@ int agc_wrapper::agc_init(int agcDb, int agcDbfs) {
     agcConfig.compressionGaindB = agcDb;   //在Fixed模式下，越大声音越大
     agcConfig.targetLevelDbfs = agcDbfs;   //dbfs表示相对于full scale的下降值，0表示full scale，越小声音越大
     status = WebRtcAgc_set_config(agc, agcConfig);
-    if(status != 0)
-    {
+    if(status != 0) {
         fprintf(stderr, "[AgcInit]: failed in WebRtcAgc_set_config\n");
         return -1;
     }
     agcIn  = (short**)malloc(nBands*sizeof(short*));
     agcOut = (short**)malloc(nBands*sizeof(short*));
-    for(iBand = 0; iBand < nBands; iBand++)
-    {
+    for(iBand = 0; iBand < nBands; iBand++) {
         agcIn [iBand] = (short*)malloc(frameSh*sizeof(short));
         agcOut[iBand] = (short*)malloc(frameSh*sizeof(short));
     }
     return 0;
 }
 
-int agc_wrapper::agc_proc(short *input, int pcmLen) {
+int agc_wrapper::agc_proc(const short *input, short *output, int pcmLen) {
     reset_data();
 
     int iFrame, status;
@@ -84,26 +76,21 @@ int agc_wrapper::agc_proc(short *input, int pcmLen) {
     int micLevelOut = 0;                          //麦克风的输出级别
     uint8_t saturationWarning;                    //是否有溢出发生，增益放大以后的最大值超过了65536
     int echo = 0;                                 //增益放大是否考虑回声影响
-    for(iFrame = 0; iFrame < nFrames; iFrame++)
-    {
-        if(iFrame == nFrames-1 && leftLen != 0)
-        {
+    for(iFrame = 0; iFrame < nFrames; iFrame++) {
+        if(iFrame == nFrames-1 && leftLen != 0) {
             onceLen = leftLen;
         }
         memcpy(agcIn[0], input+iFrame*frameSh, onceLen*sizeof(short));
         status = WebRtcAgc_Process(agc, (const int16_t *const *) agcIn, nBands, frameSh, agcOut,
                                    micLevelIn, &micLevelOut, echo, &saturationWarning);
-        if(status != 0)
-        {
+        if(status != 0) {
             fprintf(stderr, "[AgcProc]: failed in WebRtcAgc_Process\n");
             return -1;
         }
-        if(saturationWarning != 0)
-        {
+        if(saturationWarning != 0) {
             fprintf(stdout, "[AgcProc]: saturationWarning occured\n");
         }
-        //fprintf(stdout, "%d\n", agcOut[0][iFrame*frameSh]);
-        memcpy(temp+iFrame*frameSh, agcOut[0], onceLen*sizeof(short));
+        memcpy(output+iFrame*frameSh, agcOut[0], onceLen*sizeof(short));
         micLevelIn = micLevelOut;
     }
     return 0;
@@ -115,5 +102,4 @@ void agc_wrapper:: reset_data() {
         memset(agcIn [iBand], 0, frameSh*sizeof(short));
         memset(agcOut[iBand], 0, frameSh*sizeof(short));
     }
-    memset(temp, 0, BUFFERSIZE*sizeof(short));
 }

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "agc_jni_main.h"
 #include "agc_wrapper.h"
 
@@ -20,20 +21,22 @@ JNIEXPORT jshortArray JNICALL
 Java_com_singun_wrapper_WebRTC_GainControl_processGainControl(JNIEnv *env, jobject instance, jint handle, jshortArray sample, jint length) {
 
     jsize arrLen = env->GetArrayLength(sample);
+    jshort *in_sample = env->GetShortArrayElements(sample, 0);
 
-    jshort *sam = env->GetShortArrayElements(sample, 0);
+    short out_sample[arrLen];
+    agc_wrapper* wrapper = (agc_wrapper*) handle;
+    int ret = wrapper->agc_proc(in_sample, out_sample, length);
 
-    short in_sample[arrLen];
-    for(int i=0; i<arrLen; i++){
-        in_sample[i] = sam[i];
+    env->ReleaseShortArrayElements(sample, in_sample, 0);
+
+    if (ret == 0) {
+        jshortArray ret_array = env->NewShortArray(arrLen);
+        env->SetShortArrayRegion(ret_array, 0, arrLen, out_sample);
+        return ret_array;
+    } else {
+        return NULL;
     }
 
-    agc_wrapper* wrapper = (agc_wrapper*) handle;
-    wrapper->agc_proc(in_sample, length);
-
-    env->ReleaseShortArrayElements(sample, sam, 0);
-
-    return sample;
 }
 
 JNIEXPORT void JNICALL

@@ -11,17 +11,12 @@ ns_wrapper::ns_wrapper() {
     ns         = NULL;
     nsIn       = NULL;
     nsOut      = NULL;
-    temp       = NULL;
 }
 
 ns_wrapper::~ns_wrapper() {
     if (ns != NULL) {
         WebRtcNs_Free((NsHandle*)ns);
         ns = NULL;
-    }
-    if (temp != NULL) {
-        free(temp);
-        temp = NULL;
     }
     free_buffer((void**)nsIn);
     free_buffer((void**)nsOut);
@@ -53,7 +48,6 @@ int ns_wrapper::ns_init(int sampleHz, int mode) {
         fprintf(stderr, "[NsInit]: failed in WebRtcNs_set_policy\n");
         return -1;
     }
-    temp  = (short *)malloc(BUFFERSIZE*sizeof(short));
     nsIn  = (float**)malloc(nBands*sizeof(float*));
     nsOut = (float**)malloc(nBands*sizeof(float*));
     for(iBand = 0; iBand < nBands; iBand++) {
@@ -63,7 +57,7 @@ int ns_wrapper::ns_init(int sampleHz, int mode) {
     return 0;
 }
 
-int ns_wrapper::ns_proc(short *output, int pcmLen) {
+int ns_wrapper::ns_proc(const short *input, short *output, int pcmLen) {
     reset_data();
 
     int iFrame, iShort;
@@ -76,7 +70,7 @@ int ns_wrapper::ns_proc(short *output, int pcmLen) {
             onceLen = leftLen;
         }
         for(iShort = 0; iShort < onceLen; iShort++) {
-            nsIn[0][iShort] = (float)temp[iFrame*frameSh+iShort];
+            nsIn[0][iShort] = (float)input[iFrame*frameSh+iShort];
         }
         WebRtcNs_Analyze((NsHandle*)ns, nsIn[0]);
         WebRtcNs_Process((NsHandle*)ns, (const float *const *) nsIn, nBands, nsOut);
@@ -93,7 +87,6 @@ void ns_wrapper:: reset_data() {
         memset(nsIn[iBand], 0, frameSh*sizeof(float));
         memset(nsOut[iBand], 0, frameSh*sizeof(float));
     }
-    memset(temp, 0, BUFFERSIZE*sizeof(short));
 }
 
 
