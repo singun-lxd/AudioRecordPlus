@@ -18,17 +18,17 @@ JNIEXPORT jint JNICALL Java_com_singun_wrapper_WebRTC_EchoCancel_initEchoCancel
 /*
  * Class:     com_singun_wrapper_WebRTC_EchoCancel
  * Method:    processEchoCancel
- * Signature: (I[S[S)[S
+ * Signature: (I[S[SI)[S
  */
 JNIEXPORT jshortArray JNICALL Java_com_singun_wrapper_WebRTC_EchoCancel_processEchoCancel
-  (JNIEnv *, jobject, jint, jshortArray, jshortArray);
+  (JNIEnv *, jobject, jint, jshortArray, jshortArray, jint);
 
 /*
  * Class:     com_singun_wrapper_WebRTC_EchoCancel
  * Method:    releaseEchoCancel
- * Signature: (I)I
+ * Signature: (I)V
  */
-JNIEXPORT jint JNICALL Java_com_singun_wrapper_WebRTC_EchoCancel_releaseEchoCancel
+JNIEXPORT void JNICALL Java_com_singun_wrapper_WebRTC_EchoCancel_releaseEchoCancel
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus

@@ -27,7 +27,8 @@ add_library(webrtc SHARED
             src/main/cpp/agc/digital_agc.c
 
             # aecm lib
-            src/main/cpp/aecm/aecm_jni_main.c
+            src/main/cpp/aecm/aecm_jni_main.cc
+            src/main/cpp/aecm/aecm_wrapper.cc
             src/main/cpp/aecm/aecm_core.cc
             src/main/cpp/aecm/aecm_core_c.cc
             src/main/cpp/aecm/echo_control_mobile.cc

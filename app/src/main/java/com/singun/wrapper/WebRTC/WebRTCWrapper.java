@@ -69,8 +69,8 @@ public class WebRTCWrapper {
         return dataOut;
     }
 
-    public short[] processEchoCancel(short[] nearendNoisy ,short[] nearendClean) {
-        short[] dataOut = mEchoCancel.process(nearendNoisy, nearendClean);
+    public short[] processEchoCancel(short[] nearendNoisy ,short[] nearendClean, int length) {
+        short[] dataOut = mEchoCancel.process(nearendNoisy, nearendClean, length);
         if (dataOut == null) {
             dataOut = nearendClean == null ? nearendNoisy : nearendClean;
         }

@@ -56,7 +56,7 @@ class NativeAudioProcessor {
             dataOut = mWebRTCWrapper.processNoiseSuppress(data, length);
         }
         if (mAudioProcessConfig.echoCancel) {
-            dataOut = mWebRTCWrapper.processEchoCancel(data, dataOut);
+            dataOut = mWebRTCWrapper.processEchoCancel(data, dataOut, length);
         }
         if (mAudioProcessConfig.gainControl) {
             short[] dataIn = dataOut == null ? data : dataOut;

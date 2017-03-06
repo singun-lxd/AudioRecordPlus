@@ -8,7 +8,7 @@ public class EchoCancel {
         return mHandle != 0;
     }
 
-    public short[] process(short[] nearendNoisy ,short[] nearendClean) {
+    public short[] process(short[] nearendNoisy ,short[] nearendClean, int length) {
         return processEchoCancel(mHandle, nearendNoisy, nearendClean);
     }
 

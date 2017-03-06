@@ -16,7 +16,7 @@ public:
     ns_wrapper();
     ~ns_wrapper();
 
-    int ns_init(int nsMode, int mode);
+    int ns_init(int sampleHz, int mode);
     int ns_proc(const short* input, short *output, int pcmLen);
 private:
     void reset_data();
