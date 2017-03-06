@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 //#include "checks.h"
-#include "fft4g.h"
+#include "../common/fft4g.h"
 #include "signal_processing_library.h"
 #include "noise_suppression.h"
 #include "ns_core.h"

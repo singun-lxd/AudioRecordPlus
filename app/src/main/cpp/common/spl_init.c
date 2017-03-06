@@ -14,7 +14,6 @@
  * Some code came from common/rtcd.c in the WebM project.
  */
 
-#include "real_fft.h"
 #include "signal_processing_library.h"
 #include "cpu_features_wrapper.h"
 
@@ -28,11 +27,8 @@ MinValueW32 WebRtcSpl_MinValueW32;
 CrossCorrelation WebRtcSpl_CrossCorrelation;
 DownsampleFast WebRtcSpl_DownsampleFast;
 ScaleAndAddVectorsWithRound WebRtcSpl_ScaleAndAddVectorsWithRound;
-//RealForwardFFT WebRtcSpl_RealForwardFFT;
-//RealInverseFFT WebRtcSpl_RealInverseFFT;
 
-#if (defined(WEBRTC_DETECT_ARM_NEON) || !defined(WEBRTC_ARCH_ARM_NEON)) && \
-     !defined(MIPS32_LE)
+#if (!defined(WEBRTC_HAS_NEON)) && !defined(MIPS32_LE)
 /* Initialize function pointers to the generic C version. */
 static void InitPointersToC() {
   WebRtcSpl_MaxAbsValueW16 = WebRtcSpl_MaxAbsValueW16C;
@@ -45,12 +41,10 @@ static void InitPointersToC() {
   WebRtcSpl_DownsampleFast = WebRtcSpl_DownsampleFastC;
   WebRtcSpl_ScaleAndAddVectorsWithRound =
       WebRtcSpl_ScaleAndAddVectorsWithRoundC;
-//  WebRtcSpl_RealForwardFFT = WebRtcSpl_RealForwardFFTC;
-//  WebRtcSpl_RealInverseFFT = WebRtcSpl_RealInverseFFTC;
 }
 #endif
 
-#if defined(WEBRTC_DETECT_ARM_NEON) || defined(WEBRTC_ARCH_ARM_NEON)
+#if defined(WEBRTC_HAS_NEON)
 /* Initialize function pointers to the Neon version. */
 static void InitPointersToNeon() {
   WebRtcSpl_MaxAbsValueW16 = WebRtcSpl_MaxAbsValueW16Neon;
@@ -62,9 +56,7 @@ static void InitPointersToNeon() {
   WebRtcSpl_CrossCorrelation = WebRtcSpl_CrossCorrelationNeon;
   WebRtcSpl_DownsampleFast = WebRtcSpl_DownsampleFastNeon;
   WebRtcSpl_ScaleAndAddVectorsWithRound =
-      WebRtcSpl_ScaleAndAddVectorsWithRoundNeon;
-  WebRtcSpl_RealForwardFFT = WebRtcSpl_RealForwardFFTNeon;
-  WebRtcSpl_RealInverseFFT = WebRtcSpl_RealInverseFFTNeon;
+      WebRtcSpl_ScaleAndAddVectorsWithRoundC;
 }
 #endif
 
@@ -76,35 +68,19 @@ static void InitPointersToMIPS() {
   WebRtcSpl_MaxValueW32 = WebRtcSpl_MaxValueW32_mips;
   WebRtcSpl_MinValueW16 = WebRtcSpl_MinValueW16_mips;
   WebRtcSpl_MinValueW32 = WebRtcSpl_MinValueW32_mips;
-  WebRtcSpl_CrossCorrelation = WebRtcSpl_CrossCorrelationC;
-  WebRtcSpl_DownsampleFast = WebRtcSpl_DownsampleFastC;
-  WebRtcSpl_ScaleAndAddVectorsWithRound =
-      WebRtcSpl_ScaleAndAddVectorsWithRoundC;
-  WebRtcSpl_RealForwardFFT = WebRtcSpl_RealForwardFFTC;
-  WebRtcSpl_RealInverseFFT = WebRtcSpl_RealInverseFFTC;
+  WebRtcSpl_CrossCorrelation = WebRtcSpl_CrossCorrelation_mips;
+  WebRtcSpl_DownsampleFast = WebRtcSpl_DownsampleFast_mips;
 #if defined(MIPS_DSP_R1_LE)
   WebRtcSpl_MaxAbsValueW32 = WebRtcSpl_MaxAbsValueW32_mips;
+  WebRtcSpl_ScaleAndAddVectorsWithRound =
+      WebRtcSpl_ScaleAndAddVectorsWithRound_mips;
 #else
   WebRtcSpl_MaxAbsValueW32 = WebRtcSpl_MaxAbsValueW32C;
+  WebRtcSpl_ScaleAndAddVectorsWithRound =
+      WebRtcSpl_ScaleAndAddVectorsWithRoundC;
 #endif
 }
 #endif
-
-static void InitFunctionPointers(void) {
-#if defined(WEBRTC_DETECT_ARM_NEON)
-  if ((WebRtc_GetCPUFeaturesARM() & kCPUFeatureNEON) != 0) {
-    InitPointersToNeon();
-  } else {
-    InitPointersToC();
-  }
-#elif defined(WEBRTC_ARCH_ARM_NEON)
-  InitPointersToNeon();
-#elif defined(MIPS32_LE)
-  InitPointersToMIPS();
-#else
-  InitPointersToC();
-#endif  /* WEBRTC_DETECT_ARM_NEON */
-}
 
 #if (defined(WEBRTC_DETECT_ARM_NEON) || !defined(WEBRTC_ARCH_ARM_NEON)) && \
      !defined(MIPS32_LE)
@@ -112,6 +88,16 @@ static void once(void (*func)(void)) {
     func();
 }
 #endif
+
+static void InitFunctionPointers(void) {
+#if defined(WEBRTC_HAS_NEON)
+  InitPointersToNeon();
+#elif defined(MIPS32_LE)
+  InitPointersToMIPS();
+#else
+  InitPointersToC();
+#endif  /* WEBRTC_HAS_NEON */
+}
 
 #if defined(WEBRTC_POSIX)
 #include <pthread.h>

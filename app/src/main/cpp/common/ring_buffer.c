@@ -17,20 +17,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum Wrap {
-  SAME_WRAP,
-  DIFF_WRAP
-};
-
-struct RingBuffer {
-  size_t read_pos;
-  size_t write_pos;
-  size_t element_count;
-  size_t element_size;
-  enum Wrap rw_wrap;
-  char* data;
-};
-
 // Get address of region(s) from which we can read data.
 // If the region is contiguous, |data_ptr_bytes_2| will be zero.
 // If non-contiguous, |data_ptr_bytes_2| will be the size in bytes of the second
@@ -85,23 +71,18 @@ RingBuffer* WebRtc_CreateBuffer(size_t element_count, size_t element_size) {
 
   self->element_count = element_count;
   self->element_size = element_size;
+  WebRtc_InitBuffer(self);
 
   return self;
 }
 
-int WebRtc_InitBuffer(RingBuffer* self) {
-  if (!self) {
-    return -1;
-  }
-
+void WebRtc_InitBuffer(RingBuffer* self) {
   self->read_pos = 0;
   self->write_pos = 0;
   self->rw_wrap = SAME_WRAP;
 
   // Initialize buffer to zeros
   memset(self->data, 0, self->element_count * self->element_size);
-
-  return 0;
 }
 
 void WebRtc_FreeBuffer(void* handle) {

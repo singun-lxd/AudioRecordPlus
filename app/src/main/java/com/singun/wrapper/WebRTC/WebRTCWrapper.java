@@ -13,13 +13,13 @@ public class WebRTCWrapper {
 
     private boolean mInit;
     private NoiseSuppress mNoiseSuppress;
-//    private EchoCancel mEchoCancel;
+    private EchoCancel mEchoCancel;
     private GainControl mGainControl;
 
     public WebRTCWrapper() {
         mInit = false;
         mNoiseSuppress = new NoiseSuppress();
-//        mEchoCancel = new EchoCancel();
+        mEchoCancel = new EchoCancel();
         mGainControl = new GainControl();
     }
 
@@ -33,10 +33,10 @@ public class WebRTCWrapper {
         if (!noiseInit) {
             return false;
         }
-//        boolean echoCancel = mEchoCancel.init(sampleRate);
-//        if (!echoCancel) {
-//            return false;
-//        }
+        boolean echoCancel = mEchoCancel.init(sampleRate);
+        if (!echoCancel) {
+            return false;
+        }
         boolean gainInit = mGainControl.init(sampleRate, AGC_DB, AGC_DBFS);
         if (!gainInit) {
             return false;
@@ -70,12 +70,11 @@ public class WebRTCWrapper {
     }
 
     public short[] processEchoCancel(short[] nearendNoisy ,short[] nearendClean) {
-//        short[] dataOut = mEchoCancel.process(nearendNoisy, nearendClean);
-//        if (dataOut == null) {
-//            dataOut = nearendClean == null ? nearendNoisy : nearendClean;
-//        }
-//        return dataOut;
-        return nearendClean == null ? nearendNoisy : nearendClean;
+        short[] dataOut = mEchoCancel.process(nearendNoisy, nearendClean);
+        if (dataOut == null) {
+            dataOut = nearendClean == null ? nearendNoisy : nearendClean;
+        }
+        return dataOut;
     }
 
     public short[] processGainControl(short[] data, int length) {
@@ -88,7 +87,7 @@ public class WebRTCWrapper {
 
     public void release() {
         mNoiseSuppress.release();
-//        mEchoCancel.release();
+        mEchoCancel.release();
         mGainControl.release();
     }
 

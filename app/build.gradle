@@ -16,6 +16,7 @@ android {
         }
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+//            stl = "stlport_shared"
         }
     }
     buildTypes {

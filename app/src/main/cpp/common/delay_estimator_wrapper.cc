@@ -10,13 +10,12 @@
 
 #include "delay_estimator_wrapper.h"
 
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
+//#include "checks.h"
 #include "delay_estimator.h"
 #include "delay_estimator_internal.h"
-#include "compile_assert_c.h"
 
 // Only bit |kBandFirst| through bit |kBandLast| are processed and
 // |kBandFirst| - |kBandLast| must be < 32.
@@ -43,7 +42,7 @@ static __inline uint32_t SetBit(uint32_t in, int pos) {
 static void MeanEstimatorFloat(float new_value,
                                float scale,
                                float* mean_value) {
-  assert(scale < 1.0f);
+//  RTC_DCHECK_LT(scale, 1.0f);
   *mean_value += (new_value - *mean_value) * scale;
 }
 
@@ -58,14 +57,14 @@ static void MeanEstimatorFloat(float new_value,
 // Return:
 //      - out                 : Binary spectrum.
 //
-static uint32_t BinarySpectrumFix(uint16_t* spectrum,
+static uint32_t BinarySpectrumFix(const uint16_t* spectrum,
                                   SpectrumType* threshold_spectrum,
                                   int q_domain,
                                   int* threshold_initialized) {
   int i = kBandFirst;
   uint32_t out = 0;
 
-  assert(q_domain < 16);
+//  RTC_DCHECK_LT(q_domain, 16);
 
   if (!(*threshold_initialized)) {
     // Set the |threshold_spectrum| to half the input |spectrum| as starting
@@ -93,7 +92,7 @@ static uint32_t BinarySpectrumFix(uint16_t* spectrum,
   return out;
 }
 
-static uint32_t BinarySpectrumFloat(float* spectrum,
+static uint32_t BinarySpectrumFloat(const float* spectrum,
                                     SpectrumType* threshold_spectrum,
                                     int* threshold_initialized) {
   int i = kBandFirst;
@@ -144,10 +143,11 @@ void* WebRtc_CreateDelayEstimatorFarend(int spectrum_size, int history_size) {
 
   // Check if the sub band used in the delay estimation is small enough to fit
   // the binary spectra in a uint32_t.
-  COMPILE_ASSERT(kBandLast - kBandFirst < 32);
+  static_assert(kBandLast - kBandFirst < 32, "");
 
   if (spectrum_size >= kBandLast) {
-    self = malloc(sizeof(DelayEstimator));
+    self = static_cast<DelayEstimatorFarend*>(
+        malloc(sizeof(DelayEstimatorFarend)));
   }
 
   if (self != NULL) {
@@ -158,7 +158,8 @@ void* WebRtc_CreateDelayEstimatorFarend(int spectrum_size, int history_size) {
     memory_fail |= (self->binary_farend == NULL);
 
     // Allocate memory for spectrum buffers.
-    self->mean_far_spectrum = malloc(spectrum_size * sizeof(SpectrumType));
+    self->mean_far_spectrum =
+        static_cast<SpectrumType*>(malloc(spectrum_size * sizeof(SpectrumType)));
     memory_fail |= (self->mean_far_spectrum == NULL);
 
     self->spectrum_size = spectrum_size;
@@ -191,8 +192,16 @@ int WebRtc_InitDelayEstimatorFarend(void* handle) {
   return 0;
 }
 
-int WebRtc_AddFarSpectrumFix(void* handle, uint16_t* far_spectrum,
-                             int spectrum_size, int far_q) {
+void WebRtc_SoftResetDelayEstimatorFarend(void* handle, int delay_shift) {
+  DelayEstimatorFarend* self = (DelayEstimatorFarend*) handle;
+//  RTC_DCHECK(self);
+  WebRtc_SoftResetBinaryDelayEstimatorFarend(self->binary_farend, delay_shift);
+}
+
+int WebRtc_AddFarSpectrumFix(void* handle,
+                             const uint16_t* far_spectrum,
+                             int spectrum_size,
+                             int far_q) {
   DelayEstimatorFarend* self = (DelayEstimatorFarend*) handle;
   uint32_t binary_spectrum = 0;
 
@@ -220,7 +229,8 @@ int WebRtc_AddFarSpectrumFix(void* handle, uint16_t* far_spectrum,
   return 0;
 }
 
-int WebRtc_AddFarSpectrumFloat(void* handle, float* far_spectrum,
+int WebRtc_AddFarSpectrumFloat(void* handle,
+                               const float* far_spectrum,
                                int spectrum_size) {
   DelayEstimatorFarend* self = (DelayEstimatorFarend*) handle;
   uint32_t binary_spectrum = 0;
@@ -261,12 +271,12 @@ void WebRtc_FreeDelayEstimator(void* handle) {
   free(self);
 }
 
-void* WebRtc_CreateDelayEstimator(void* farend_handle, int lookahead) {
+void* WebRtc_CreateDelayEstimator(void* farend_handle, int max_lookahead) {
   DelayEstimator* self = NULL;
   DelayEstimatorFarend* farend = (DelayEstimatorFarend*) farend_handle;
 
   if (farend_handle != NULL) {
-    self = malloc(sizeof(DelayEstimator));
+    self = static_cast<DelayEstimator*>(malloc(sizeof(DelayEstimator)));
   }
 
   if (self != NULL) {
@@ -274,12 +284,12 @@ void* WebRtc_CreateDelayEstimator(void* farend_handle, int lookahead) {
 
     // Allocate memory for the farend spectrum handling.
     self->binary_handle =
-        WebRtc_CreateBinaryDelayEstimator(farend->binary_farend, lookahead);
+        WebRtc_CreateBinaryDelayEstimator(farend->binary_farend, max_lookahead);
     memory_fail |= (self->binary_handle == NULL);
 
     // Allocate memory for spectrum buffers.
-    self->mean_near_spectrum = malloc(farend->spectrum_size *
-                                      sizeof(SpectrumType));
+    self->mean_near_spectrum = static_cast<SpectrumType*>(
+        malloc(farend->spectrum_size * sizeof(SpectrumType)));
     memory_fail |= (self->mean_near_spectrum == NULL);
 
     self->spectrum_size = farend->spectrum_size;
@@ -312,8 +322,98 @@ int WebRtc_InitDelayEstimator(void* handle) {
   return 0;
 }
 
+int WebRtc_SoftResetDelayEstimator(void* handle, int delay_shift) {
+  DelayEstimator* self = (DelayEstimator*) handle;
+//  RTC_DCHECK(self);
+  return WebRtc_SoftResetBinaryDelayEstimator(self->binary_handle, delay_shift);
+}
+
+int WebRtc_set_history_size(void* handle, int history_size) {
+  DelayEstimator* self = static_cast<DelayEstimator*>(handle);
+
+  if ((self == NULL) || (history_size <= 1)) {
+    return -1;
+  }
+  return WebRtc_AllocateHistoryBufferMemory(self->binary_handle, history_size);
+}
+
+int WebRtc_history_size(const void* handle) {
+  const DelayEstimator* self = static_cast<const DelayEstimator*>(handle);
+
+  if (self == NULL) {
+    return -1;
+  }
+  if (self->binary_handle->farend->history_size !=
+      self->binary_handle->history_size) {
+    // Non matching history sizes.
+    return -1;
+  }
+  return self->binary_handle->history_size;
+}
+
+int WebRtc_set_lookahead(void* handle, int lookahead) {
+  DelayEstimator* self = (DelayEstimator*) handle;
+//  RTC_DCHECK(self);
+//  RTC_DCHECK(self->binary_handle);
+  if ((lookahead > self->binary_handle->near_history_size - 1) ||
+      (lookahead < 0)) {
+    return -1;
+  }
+  self->binary_handle->lookahead = lookahead;
+  return self->binary_handle->lookahead;
+}
+
+int WebRtc_lookahead(void* handle) {
+  DelayEstimator* self = (DelayEstimator*) handle;
+//  RTC_DCHECK(self);
+//  RTC_DCHECK(self->binary_handle);
+  return self->binary_handle->lookahead;
+}
+
+int WebRtc_set_allowed_offset(void* handle, int allowed_offset) {
+  DelayEstimator* self = (DelayEstimator*) handle;
+
+  if ((self == NULL) || (allowed_offset < 0)) {
+    return -1;
+  }
+  self->binary_handle->allowed_offset = allowed_offset;
+  return 0;
+}
+
+int WebRtc_get_allowed_offset(const void* handle) {
+  const DelayEstimator* self = (const DelayEstimator*) handle;
+
+  if (self == NULL) {
+    return -1;
+  }
+  return self->binary_handle->allowed_offset;
+}
+
+int WebRtc_enable_robust_validation(void* handle, int enable) {
+  DelayEstimator* self = (DelayEstimator*) handle;
+
+  if (self == NULL) {
+    return -1;
+  }
+  if ((enable < 0) || (enable > 1)) {
+    return -1;
+  }
+//  RTC_DCHECK(self->binary_handle);
+  self->binary_handle->robust_validation_enabled = enable;
+  return 0;
+}
+
+int WebRtc_is_robust_validation_enabled(const void* handle) {
+  const DelayEstimator* self = (const DelayEstimator*) handle;
+
+  if (self == NULL) {
+    return -1;
+  }
+  return self->binary_handle->robust_validation_enabled;
+}
+
 int WebRtc_DelayEstimatorProcessFix(void* handle,
-                                    uint16_t* near_spectrum,
+                                    const uint16_t* near_spectrum,
                                     int spectrum_size,
                                     int near_q) {
   DelayEstimator* self = (DelayEstimator*) handle;
@@ -345,7 +445,7 @@ int WebRtc_DelayEstimatorProcessFix(void* handle,
 }
 
 int WebRtc_DelayEstimatorProcessFloat(void* handle,
-                                      float* near_spectrum,
+                                      const float* near_spectrum,
                                       int spectrum_size) {
   DelayEstimator* self = (DelayEstimator*) handle;
   uint32_t binary_spectrum = 0;
@@ -379,12 +479,8 @@ int WebRtc_last_delay(void* handle) {
   return WebRtc_binary_last_delay(self->binary_handle);
 }
 
-int WebRtc_last_delay_quality(void* handle) {
+float WebRtc_last_delay_quality(void* handle) {
   DelayEstimator* self = (DelayEstimator*) handle;
-
-  if (self == NULL) {
-    return -1;
-  }
-
+//  RTC_DCHECK(self);
   return WebRtc_binary_last_delay_quality(self->binary_handle);
 }

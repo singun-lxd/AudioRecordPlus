@@ -19,7 +19,7 @@ base_wrapper::~base_wrapper() {
 
 int base_wrapper::init(int sampleHzIn) {
     if(nBands < 1 || nBands > 2) {
-        fprintf(stderr, "[FrontInit]: only support nBands 1 or 2\n");
+        fprintf(stderr, "[base_wrapper]: only support nBands 1 or 2\n");
         return -1;
     }
     sampleHz = sampleHzIn;
@@ -31,7 +31,7 @@ int base_wrapper::init(int sampleHzIn) {
             frameSh = sampleHz * ((float)frameMs / 1000);
             break;
         default:
-            fprintf(stderr, "[FrontInit]: only support sampleHz 8k 16k 32k 48k\n");
+            fprintf(stderr, "[base_wrapper]: only support sampleHz 8k 16k 32k 48k\n");
             return -1;
     }
     return 0;
