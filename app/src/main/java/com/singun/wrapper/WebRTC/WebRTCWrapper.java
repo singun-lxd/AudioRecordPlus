@@ -62,20 +62,34 @@ public class WebRTCWrapper {
     }
 
     public short[] processNoiseSuppress(short[] data, int length) {
-        return mNoiseSuppress.process(data, length);
+        short[] dataOut = mNoiseSuppress.process(data, length);
+        if (dataOut == null) {
+            dataOut = data;
+        }
+        return dataOut;
     }
 
     public short[] processEchoCancel(short[] nearendNoisy ,short[] nearendClean) {
-        return null;//mEchoCancel.process(nearendNoisy, nearendClean);
+//        short[] dataOut = mEchoCancel.process(nearendNoisy, nearendClean);
+//        if (dataOut == null) {
+//            dataOut = nearendClean == null ? nearendNoisy : nearendClean;
+//        }
+//        return dataOut;
+        return nearendClean == null ? nearendNoisy : nearendClean;
     }
 
     public short[] processGainControl(short[] data, int length) {
-        return mGainControl.process(data, length);
+        short[] dataOut = mGainControl.process(data, length);
+        if (dataOut == null) {
+            dataOut = data;
+        }
+        return dataOut;
     }
 
     public void release() {
         mNoiseSuppress.release();
 //        mEchoCancel.release();
+        mGainControl.release();
     }
 
     public static boolean isSupportNoiseSuppress() {
