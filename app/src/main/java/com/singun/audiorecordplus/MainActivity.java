@@ -184,11 +184,15 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
     @Override
     public void onPermissionAllDenied() {
-
+        showDeniedDialog();
     }
 
     @Override
     public void onPermissionPartDenied() {
+        showDeniedDialog();
+    }
+
+    private void showDeniedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title_permission_denied)
                 .setMessage(R.string.dialog_content_permission_denied)
