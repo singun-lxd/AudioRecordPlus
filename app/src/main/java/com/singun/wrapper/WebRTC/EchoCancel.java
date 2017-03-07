@@ -9,7 +9,7 @@ public class EchoCancel {
     }
 
     public short[] process(short[] nearendNoisy ,short[] nearendClean, int length) {
-        return processEchoCancel(mHandle, nearendNoisy, nearendClean);
+        return processEchoCancel(mHandle, nearendNoisy, nearendClean, length);
     }
 
     public void release() {
@@ -31,7 +31,7 @@ public class EchoCancel {
      * @param nearendClean 降噪过的数据
      * @return
      */
-    private native short[] processEchoCancel(int handle, short[] nearendNoisy ,short[] nearendClean);
+    private native short[] processEchoCancel(int handle, short[] nearendNoisy ,short[] nearendClean, int length);
 
     private native int releaseEchoCancel(int handle);
 }
