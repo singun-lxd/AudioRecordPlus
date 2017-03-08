@@ -8,8 +8,10 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.view.Window;
 
+import com.singun.media.audio.player.MiniAudioTrack;
 import com.singun.media.audio.processor.AudioProcessConfig;
 import com.singun.media.audio.processor.AudioProcessor;
+import com.singun.media.audio.recorder.ExtraAudioRecorder;
 
 /**
  * Created by singun on 2017/3/1 0001.

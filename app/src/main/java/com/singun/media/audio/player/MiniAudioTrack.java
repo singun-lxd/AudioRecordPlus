@@ -1,8 +1,10 @@
-package com.singun.media.audio;
+package com.singun.media.audio.player;
 
 import android.annotation.TargetApi;
 import android.media.AudioTrack;
 import android.os.Build;
+
+import com.singun.media.audio.AudioConfig;
 
 /**
  * Created by singun on 2017/3/1 0001.

@@ -1,5 +1,6 @@
-package com.singun.media.audio;
+package com.singun.media.audio.recorder;
 
+import com.singun.media.audio.AudioConfig;
 import com.singun.media.audio.processor.AudioProcessor;
 
 /**

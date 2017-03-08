@@ -1,6 +1,6 @@
-package com.singun.media.audio;
+package com.singun.media.audio.recorder;
 
-import com.singun.media.audio.processor.AudioProcessor;
+import com.singun.media.audio.AudioConfig;
 
 import java.io.File;
 

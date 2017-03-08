@@ -1,7 +1,8 @@
-package com.singun.media.audio;
+package com.singun.media.audio.recorder;
 
 import android.text.TextUtils;
 
+import com.singun.media.audio.AudioConfig;
 import com.singun.media.audio.encode.AudioEncodeUtil;
 
 import java.io.BufferedOutputStream;

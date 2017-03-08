@@ -1,7 +1,9 @@
-package com.singun.media.audio;
+package com.singun.media.audio.recorder;
 
 import android.media.AudioRecord;
 import android.os.Build;
+
+import com.singun.media.audio.AudioConfig;
 
 /**
  * Created by singun on 2017/3/1 0001.
