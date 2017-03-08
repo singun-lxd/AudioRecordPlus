@@ -64,6 +64,13 @@ public class AudioProcessor {
         return false;
     }
 
+    public short[] processAudioData(short[] data, int length) {
+        if (isNativeNoiseSuppressEnabled() || isNativeGainControlEnabled() || isNativeEchoCancellerEnabled()) {
+            return mNativeProcessor.processAudioData(data, length);
+        }
+        return null;
+    }
+
     private boolean isNativeNoiseSuppressEnabled() {
         return mAudioProcessConfig.noiseSuppress && !AndroidAudioProcessorSupport.isSupportNoiseSuppressor();
     }

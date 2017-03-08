@@ -19,4 +19,12 @@ public class BaseAudioRecorder {
             audioConfig.audioDataOut = audioConfig.audioDataIn;
         }
     }
+
+    protected short[] processAudioData(short[] dataIn, int length) {
+        short[] dataOut = mAudioProcessor.processAudioData(dataIn, length);
+        if (dataOut == null) {
+            dataOut = dataIn;
+        }
+        return dataOut;
+    }
 }

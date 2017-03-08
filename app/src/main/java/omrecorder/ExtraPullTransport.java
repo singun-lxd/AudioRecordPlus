@@ -16,7 +16,7 @@ public class ExtraPullTransport extends PullTransport.AbstractPullTransport {
 
     public ExtraPullTransport(AudioSource audioRecordSource,
                    OnAudioChunkPulledListener onAudioChunkPulledListener,
-                              WriteAction writeAction, ProcessAction processAction) {
+                   WriteAction writeAction, ProcessAction processAction) {
         super(audioRecordSource, onAudioChunkPulledListener);
         this.writeAction = writeAction;
         this.processAction = processAction;
@@ -26,7 +26,8 @@ public class ExtraPullTransport extends PullTransport.AbstractPullTransport {
         this(audioRecordSource, null, new WriteAction.Default(), processAction);
     }
 
-    @Override void startPoolingAndWriting(AudioRecord audioRecord, int minimumBufferSize,
+    @Override
+    void startPoolingAndWriting(AudioRecord audioRecord, int minimumBufferSize,
                                           OutputStream outputStream) throws IOException {
         while (audioRecordSource.isEnableToBePulled()) {
             int size = minimumBufferSize / 2;

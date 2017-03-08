@@ -44,6 +44,17 @@ class NativeAudioProcessor {
         }
     }
 
+    public short[] processAudioData(short[] data, int length) {
+        if (needProcessData()) {
+            short[] bufferCopy = new short[length];
+            System.arraycopy(data, 0, bufferCopy, 0, length);
+
+            return processData(bufferCopy, length);
+        } else {
+            return null;
+        }
+    }
+
     private boolean needProcessData() {
         return (mAudioProcessConfig.noiseSuppress && NativeAudioProcessorSupport.isSupportNoiseSuppressor()) ||
                 (mAudioProcessConfig.gainControl && NativeAudioProcessorSupport.isSupportGainControl()) ||

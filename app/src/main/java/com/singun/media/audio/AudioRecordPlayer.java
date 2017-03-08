@@ -193,12 +193,6 @@ public class AudioRecordPlayer {
         mAudioManager = null;
     }
 
-    protected void processAudioData(AudioConfig audioConfig, int length) {
-        if (!mAudioProcessor.processAudioData(audioConfig, length)) {
-            audioConfig.audioDataOut = audioConfig.audioDataIn;
-        }
-    }
-
     private class AudioRecordPlayThread extends Thread {
         public AudioRecordPlayThread() {
             super("AudioRecordPlayThread");

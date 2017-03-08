@@ -65,17 +65,12 @@ public class ExtraAudioRecorder extends BaseAudioRecorder implements ExtraPullTr
             if (mCacheData == null || mCacheLength > mCacheData.length) {
                 return 0;
             }
-            for (int i = 0; i < mCacheLength; i++) {
-                mAudioConfig.audioDataIn[i] = mCacheData[i];
-            }
-            for (int i = mCacheLength; i < mAudioConfig.audioDataIn.length; i++) {
-                mAudioConfig.audioDataIn[i] = 0;
-            }
             length = mCacheLength;
+            mAudioConfig.audioDataOut = mCacheData;
             mCacheData = null;
             mCacheLength = 0;
         }
-        processAudioData(mAudioConfig, length);
+
         return length;
     }
 
@@ -105,7 +100,14 @@ public class ExtraAudioRecorder extends BaseAudioRecorder implements ExtraPullTr
     public void processData(AudioChunk audioChunk, int length) {
         synchronized (this) {
             mCacheLength = length;
-            mCacheData = audioChunk.toShorts();
+            short[] dataRecorded = audioChunk.toShorts();
+            short[] dataProcessed = processAudioData(dataRecorded, length);
+            if (dataRecorded != dataProcessed) {
+                for (int i = 0; i < dataRecorded.length; i++) {
+                    dataRecorded[i] = dataProcessed[i];
+                }
+            }
+            mCacheData = dataProcessed;
         }
     }
 }
