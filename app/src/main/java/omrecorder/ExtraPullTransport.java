@@ -31,13 +31,13 @@ public class ExtraPullTransport extends PullTransport.AbstractPullTransport {
                                           OutputStream outputStream) throws IOException {
         while (audioRecordSource.isEnableToBePulled()) {
             int size = minimumBufferSize / 2;
-            AudioChunk audioChunk = new AudioChunk.Shorts(new short[size]);
-            int length = audioRecord.read(audioChunk.toShorts(), 0, size);
-            if (length > 0) {
+            AudioChunk.Shorts audioChunk = new AudioChunk.Shorts(new short[size]);
+            audioChunk.numberOfShortsRead = audioRecord.read(audioChunk.toShorts(), 0, size);
+            if (audioChunk.numberOfShortsRead > 0) {
                 if (onAudioChunkPulledListener != null) {
                     postPullEvent(audioChunk);
                 }
-                processAction.processData(audioChunk, length);
+                processAction.processData(audioChunk, audioChunk.numberOfShortsRead);
                 writeAction.execute(audioChunk.toBytes(), outputStream);
             }
         }

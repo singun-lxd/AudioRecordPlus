@@ -4,6 +4,7 @@ import com.singun.media.audio.encode.AudioEncodeUtil;
 import com.singun.media.audio.player.MiniAudioTrack;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,9 +47,9 @@ public class AudioPlayer {
         if (mAudioTrack.isPlaying()) {
             return;
         }
+        mAudioTrack.startPlaying();
         AudioPlayThread thread = new AudioPlayThread();
         thread.start();
-        mAudioTrack.startPlaying();
     }
 
     public void stop() {
@@ -107,7 +108,8 @@ public class AudioPlayer {
                 closeAudioFile();
             }
             try {
-                mInputStream = new BufferedInputStream(new FileInputStream(audioFile));
+                FileInputStream inputStream = new FileInputStream(audioFile);
+                mInputStream = new DataInputStream(new BufferedInputStream(inputStream));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
