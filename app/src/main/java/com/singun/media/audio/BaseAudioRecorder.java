@@ -15,12 +15,15 @@ public class BaseAudioRecorder {
     }
 
     protected void processAudioData(AudioConfig audioConfig, int length) {
-        if (!mAudioProcessor.processAudioData(audioConfig, length)) {
+        if (mAudioProcessor == null || !mAudioProcessor.processAudioData(audioConfig, length)) {
             audioConfig.audioDataOut = audioConfig.audioDataIn;
         }
     }
 
     protected short[] processAudioData(short[] dataIn, int length) {
+        if (mAudioProcessor == null) {
+            return dataIn;
+        }
         short[] dataOut = mAudioProcessor.processAudioData(dataIn, length);
         if (dataOut == null) {
             dataOut = dataIn;

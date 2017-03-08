@@ -183,6 +183,7 @@ public class AudioRecordPlayer {
 
     public void release() {
         mReleased = true;
+        mAudioRecorder.setAudioProcessor(null);
         mAudioRecorder.release();
         mAudioTrack.release();
         mAudioProcessor.release();
