@@ -68,18 +68,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
             @Override
             public void onClick(View v) {
                 startOrStopPlaying();
-
-                if (mAudioRecordPlayer.isFilePlaying()) {
-                    mButtonAction.setEnabled(false);
-                    Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_pause);
-                    mButtonPlay.setCompoundDrawables(drawable, null, null, null);
-                    mButtonPlay.setText(R.string.button_stop);
-                } else {
-                    mButtonAction.setEnabled(true);
-                    Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
-                    mButtonPlay.setCompoundDrawables(drawable, null, null, null);
-                    mButtonPlay.setText(R.string.button_play);
-                }
+                updatePlayUi();
             }
         });
 
@@ -159,14 +148,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     public void onPermissionAllGranted() {
         startOrStopRecording();
         startVisualiser();
-
-        if (mAudioRecordPlayer.isWorking()) {
-            mButtonPlay.setEnabled(false);
-            mButtonAction.setImageResource(android.R.drawable.ic_media_pause);
-        } else {
-            mButtonPlay.setEnabled(true);
-            mButtonAction.setImageResource(android.R.drawable.ic_media_play);
-        }
+        updateRecordUi();
     }
 
     @Override
@@ -249,11 +231,35 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         }
     }
 
+    private void updateRecordUi() {
+        if (mAudioRecordPlayer.isWorking()) {
+            mButtonPlay.setEnabled(false);
+            mButtonAction.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            mButtonPlay.setEnabled(true);
+            mButtonAction.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }
+
     private void startOrStopPlaying() {
         if (mAudioRecordPlayer.isFilePlaying()) {
             mAudioRecordPlayer.stopPlayFile();
         } else {
             mAudioRecordPlayer.startPlayFile();
+        }
+    }
+
+    private void updatePlayUi() {
+        if (mAudioRecordPlayer.isFilePlaying()) {
+            mButtonAction.setEnabled(false);
+            Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_pause);
+            mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+            mButtonPlay.setText(R.string.button_stop);
+        } else {
+            mButtonAction.setEnabled(true);
+            Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
+            mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+            mButtonPlay.setText(R.string.button_play);
         }
     }
 
@@ -264,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
             public void run() {
                 mButtonAction.setEnabled(true);
                 Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
-                mButtonPlay.setCompoundDrawables(drawable, null, null, null);
+                mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
                 mButtonPlay.setText(R.string.button_play);
             }
         });

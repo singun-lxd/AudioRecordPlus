@@ -78,7 +78,7 @@ public class AudioPlayer {
             playStart();
             try {
                 mInputStream.skip(44);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             while(mAudioTrack.isPlaying() && !mReleased) {
