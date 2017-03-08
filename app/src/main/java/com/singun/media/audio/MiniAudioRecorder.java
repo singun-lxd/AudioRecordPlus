@@ -7,7 +7,8 @@ import android.os.Build;
  * Created by singun on 2017/3/1 0001.
  */
 
-public class MiniAudioRecorder {
+public class MiniAudioRecorder extends BaseAudioRecorder {
+    private AudioFileWriter mAudioFileWriter;
     private AudioConfig mAudioConfig;
     private AudioRecord mAudioRecord;
 
@@ -15,6 +16,7 @@ public class MiniAudioRecorder {
 
     public MiniAudioRecorder(AudioConfig audioConfig) throws IllegalArgumentException {
         mAudioConfig = audioConfig;
+        mAudioFileWriter = new AudioFileWriter(mAudioConfig);
 
         init();
     }
@@ -47,6 +49,7 @@ public class MiniAudioRecorder {
             return;
         }
 
+        mAudioFileWriter.createAudioFile(true);
         try {
             mAudioRecord.startRecording();
         } catch (IllegalStateException e) {
@@ -59,7 +62,10 @@ public class MiniAudioRecorder {
     }
 
     public int readAudioData() {
-        return mAudioRecord.read(mAudioConfig.audioDataIn, 0, mAudioConfig.audioDataIn.length);
+        int length = mAudioRecord.read(mAudioConfig.audioDataIn, 0, mAudioConfig.audioDataIn.length);
+        processAudioData(mAudioConfig, length);
+        mAudioFileWriter.saveRecordData(length);
+        return length;
     }
 
     public void stop() {
@@ -69,6 +75,8 @@ public class MiniAudioRecorder {
 
         mAudioRecord.stop();
 
+        mAudioFileWriter.saveAudioFormat(mAudioRecord.getSampleRate(), mAudioRecord.getChannelCount());
+
         mIsRecording = false;
     }
 
@@ -76,16 +84,11 @@ public class MiniAudioRecorder {
         return mIsRecording;
     }
 
-    public int getChannelCount() {
-        return mAudioRecord.getChannelCount();
-    }
-
-    public int getSampleRate() {
-        return mAudioRecord.getSampleRate();
-    }
-
     public void release() {
         mAudioRecord.release();
         mAudioRecord = null;
+
+        mAudioFileWriter.release();
+        mAudioFileWriter = null;
     }
 }

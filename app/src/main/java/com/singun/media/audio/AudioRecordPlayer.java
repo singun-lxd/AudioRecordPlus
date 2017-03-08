@@ -21,9 +21,8 @@ public class AudioRecordPlayer {
     private AudioManager mAudioManager;
     private Window mCurrentWindow;
 
-    private MiniAudioRecorder mAudioRecorder;
+    private ExtraAudioRecorder mAudioRecorder;
     private MiniAudioTrack mAudioTrack;
-    private AudioFileWriter mAudioFileWriter;
     private AudioProcessor mAudioProcessor;
     private AudioConfig mAudioConfig;
     private Thread mRecordPlayThread;
@@ -57,16 +56,15 @@ public class AudioRecordPlayer {
         mAudioConfig = new AudioConfig();
         mAudioConfig.streamType = AudioManager.MODE_IN_COMMUNICATION;
         mAudioConfig.audioSource = MediaRecorder.AudioSource.VOICE_COMMUNICATION;
-        mAudioConfig.sampleRateInHz = 8000;
+        mAudioConfig.sampleRateInHz = 16000;
         mAudioConfig.channelInConfig = AudioFormat.CHANNEL_IN_MONO;
         mAudioConfig.channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
         mAudioConfig.audioFormat = AudioFormat.ENCODING_PCM_16BIT;
 
         updateAudioConfig(mAudioConfig);
 
-        mAudioRecorder = new MiniAudioRecorder(mAudioConfig);
+        mAudioRecorder = new ExtraAudioRecorder(mAudioConfig);
         mAudioTrack = new MiniAudioTrack(mAudioConfig);
-        mAudioFileWriter = new AudioFileWriter(mAudioConfig);
 
         mAudioConfig.audioDataIn = new short[mAudioConfig.audioDataSize];
 
@@ -78,6 +76,7 @@ public class AudioRecordPlayer {
 
         updateAudioProcessConfig(audioProcessConfig);
         mAudioProcessor = new AudioProcessor(mAudioConfig, audioProcessConfig);
+        mAudioRecorder.setAudioProcessor(mAudioProcessor);
 
         mRecordPlayThread = new AudioRecordPlayThread();
         mRecordPlayThread.start();
@@ -155,7 +154,6 @@ public class AudioRecordPlayer {
         mOldMode = mAudioManager.getMode();
         mAudioManager.setMode(AUDIO_MODE);
 
-        mAudioFileWriter.createAudioFile(true);
         mAudioRecorder.startRecording();
         if (mTrackEnabled) {
             mAudioTrack.startPlaying();
@@ -175,7 +173,6 @@ public class AudioRecordPlayer {
         if (mTrackEnabled) {
             mAudioTrack.stop();
         }
-        mAudioFileWriter.saveAudioFormat(mAudioRecorder.getSampleRate(), mAudioRecorder.getChannelCount());
 
         mWorking = false;
     }
@@ -188,11 +185,9 @@ public class AudioRecordPlayer {
         mReleased = true;
         mAudioRecorder.release();
         mAudioTrack.release();
-        mAudioFileWriter.release();
         mAudioProcessor.release();
         mAudioRecorder = null;
         mAudioTrack = null;
-        mAudioFileWriter = null;
         mAudioProcessor = null;
         mCurrentWindow = null;
         mAudioManager = null;
@@ -218,15 +213,11 @@ public class AudioRecordPlayer {
                     length = mAudioRecorder.readAudioData();
                 }
                 if (length > 0) {
-                    processAudioData(mAudioConfig, length);
 //                    if (mListener != null) {
 //                        mListener.onAudioDataProcessed(mAudioConfig.audioDataOut);
 //                    }
                     if (mTrackEnabled && mAudioTrack != null) {
                         mAudioTrack.writeAudioData(length);
-                    }
-                    if (mAudioFileWriter != null) {
-                        mAudioFileWriter.saveRecordData(length);
                     }
                 }
             }
