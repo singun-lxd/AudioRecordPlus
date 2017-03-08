@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">录音增强</string>
+    <string name="action_settings">设置</string>
+    <string name="dialog_title_permission_denied">权限被拒绝</string>
+    <string name="dialog_content_permission_denied">请重试并且在对话框中允许权限请求。</string>
+    <string name="dialog_button_retry">重试</string>
+    <string name="dialog_button_cancel">取消</string>
+    <string name="button_play">播放</string>
+    <string name="button_stop">停止</string>
+    <string name="check_play_while_recording">边录边播</string>
+    <string name="check_noise_suppress">噪声降低</string>
+    <string name="check_gain_control">音量增益</string>
+    <string name="check_echo_cancel">回声消除</string>
+</resources>

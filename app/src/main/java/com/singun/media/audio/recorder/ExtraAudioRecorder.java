@@ -2,7 +2,9 @@ package com.singun.media.audio.recorder;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.util.Log;
 
+import com.singun.audiorecordplus.BuildConfig;
 import com.singun.media.audio.AudioConfig;
 
 import java.io.File;
@@ -109,13 +111,31 @@ public class ExtraAudioRecorder extends BaseAudioRecorder implements ExtraPullTr
         synchronized (this) {
             mCacheLength = length;
             short[] dataRecorded = audioChunk.toShorts();
+            printDebugData("dataRecorded:", dataRecorded);
             short[] dataProcessed = processAudioData(dataRecorded, length);
             if (dataRecorded != dataProcessed) {
-                for (int i = 0; i < dataRecorded.length; i++) {
+                for (int i = 0; i < length; i++) {
                     dataRecorded[i] = dataProcessed[i];
                 }
             }
+            printDebugData("dataProcessed:", dataProcessed);
             mCacheData = dataProcessed;
         }
+    }
+
+    private void printDebugData(String prefix, short[] audioData) {
+        if (!BuildConfig.DEBUG) {
+            return;
+        }
+        String recorded = prefix;
+        for (int i = 0; i < 10; i++) {
+            recorded += "[";
+            recorded += audioData[i];
+            recorded += "]";
+        }
+        recorded += "{";
+        recorded += audioData.length;
+        recorded += "}";
+        Log.e("singun", recorded);
     }
 }

@@ -7,4 +7,8 @@
     <string name="dialog_button_cancel">Cancel</string>
     <string name="button_play">Play</string>
     <string name="button_stop">Stop</string>
+    <string name="check_play_while_recording">Play sound while recording</string>
+    <string name="check_noise_suppress">Noise Suppress</string>
+    <string name="check_gain_control">Gain Control</string>
+    <string name="check_echo_cancel">Echo Cancel</string>
 </resources>

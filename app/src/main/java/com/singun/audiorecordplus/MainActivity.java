@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -42,19 +43,39 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     private Button mButtonPlay;
     private WaveformView mWaveform;
     private Visualizer mVisualizer;
+    private CheckBox mCheckPlayRecord;
+    private CheckBox mCheckNs;
+    private CheckBox mCheckAgc;
+    private CheckBox mCheckAec;
     private long mLastTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initRecord();
+        initView();
+        initConfigView();
+    }
+
+    private void initRecord() {
+        mPermissionRequest = new PermissionRequest(this,
+                new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                PERMISSION_REQUEST_CODE);
+        mPermissionRequest.setPermissionRequestListener(this);
+        mAudioRecordPlayer = new AudioRecordPlayerPlus(this, getWindow(), false);
+        mAudioRecordPlayer.setSpeakerOn(true);
+        mAudioRecordPlayer.setFilePlayStateListener(this);
+//        mAudioRecordPlayer.setAudioProcessListener(this);
+    }
+
+    private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mWaveform = (WaveformView) findViewById(R.id.audio_waveform);
         RendererFactory rendererFactory = new RendererFactory();
         mWaveform.setRenderer(rendererFactory.createSimpleWaveformRender(ContextCompat.getColor(this, R.color.colorPrimary), Color.WHITE));
-
-        initRecord();
 
         mButtonAction = (FloatingActionButton) findViewById(R.id.fab);
         mButtonAction.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         });
 
         mAudioRecordPlayer.setTrackVolume(0.8f);
-        mVolumeBar = (SeekBar) this.findViewById(R.id.audio_volume);
+        mVolumeBar = (SeekBar) findViewById(R.id.audio_volume);
         mVolumeBar.setMax(100);
         mVolumeBar.setProgress(80);
         mVolumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -93,15 +114,40 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         });
     }
 
-    private void initRecord() {
-        mPermissionRequest = new PermissionRequest(this,
-                new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE },
-                PERMISSION_REQUEST_CODE);
-        mPermissionRequest.setPermissionRequestListener(this);
-        mAudioRecordPlayer = new AudioRecordPlayerPlus(this, getWindow(), true);
-        mAudioRecordPlayer.setSpeakerOn(true);
-        mAudioRecordPlayer.setFilePlayStateListener(this);
-//        mAudioRecordPlayer.setAudioProcessListener(this);
+    private void initConfigView() {
+        mCheckPlayRecord = (CheckBox) findViewById(R.id.check_play_sound);
+        mCheckPlayRecord.setChecked(mAudioRecordPlayer.isTrackEnabled());
+        mCheckPlayRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAudioRecordPlayer.setTrackEnabled(mCheckPlayRecord.isChecked());
+            }
+        });
+
+        mCheckNs = (CheckBox) findViewById(R.id.check_ns);
+        mCheckNs.setChecked(mAudioRecordPlayer.isNoiseSuppressDefaultEnabled());
+        mCheckNs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAudioRecordPlayer.setNoiseSuppressEnabled(mCheckNs.isChecked());
+            }
+        });
+        mCheckAgc = (CheckBox) findViewById(R.id.check_agc);
+        mCheckAgc.setChecked(mAudioRecordPlayer.isGainControlDefaultEnabled());
+        mCheckAgc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAudioRecordPlayer.setGainControlEnabled(mCheckAgc.isChecked());
+            }
+        });
+        mCheckAec = (CheckBox) findViewById(R.id.check_aec);
+        mCheckAec.setChecked(mAudioRecordPlayer.isEchoCancelDefaultEnabled());
+        mCheckAec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAudioRecordPlayer.setEchoCancelEnabled(mCheckAec.isChecked());
+            }
+        });
     }
 
     @Override
@@ -233,12 +279,16 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
     private void updateRecordUi() {
         if (mAudioRecordPlayer.isWorking()) {
-            mButtonPlay.setEnabled(false);
+            setPlayEnable(false);
             mButtonAction.setImageResource(android.R.drawable.ic_media_pause);
         } else {
-            mButtonPlay.setEnabled(true);
+            setPlayEnable(true);
             mButtonAction.setImageResource(android.R.drawable.ic_media_play);
         }
+    }
+
+    private void setPlayEnable(boolean enable) {
+        mButtonPlay.setEnabled(enable);
     }
 
     private void startOrStopPlaying() {
@@ -251,16 +301,25 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
     private void updatePlayUi() {
         if (mAudioRecordPlayer.isFilePlaying()) {
-            mButtonAction.setEnabled(false);
+            setRecordEnable(false);
             Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_pause);
             mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
             mButtonPlay.setText(R.string.button_stop);
         } else {
-            mButtonAction.setEnabled(true);
+            setRecordEnable(true);
             Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
             mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
             mButtonPlay.setText(R.string.button_play);
         }
+    }
+
+    private void setRecordEnable(boolean enable) {
+        mButtonAction.setEnabled(enable);
+
+        mCheckPlayRecord.setEnabled(enable);
+        mCheckNs.setEnabled(enable);
+        mCheckAgc.setEnabled(enable);
+//        mCheckAec.setEnabled(enable);
     }
 
     @Override
@@ -268,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mButtonAction.setEnabled(true);
+                setRecordEnable(true);
                 Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
                 mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
                 mButtonPlay.setText(R.string.button_play);
