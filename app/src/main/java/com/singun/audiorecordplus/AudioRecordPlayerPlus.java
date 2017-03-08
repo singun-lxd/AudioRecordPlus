@@ -35,9 +35,21 @@ public class AudioRecordPlayerPlus extends AudioRecordPlayer {
 
     @Override
     protected void updateAudioProcessConfig(AudioProcessConfig audioProcessConfig) {
-        audioProcessConfig.noiseSuppress = false;
-        audioProcessConfig.gainControl = false;
-        audioProcessConfig.echoCancel = false;
+        audioProcessConfig.noiseSuppress = isNoiseSuppressDefaultEnabled();
+        audioProcessConfig.gainControl = isGainControlDefaultEnabled();
+        audioProcessConfig.echoCancel = isEchoCancelDefaultEnabled();
+    }
+
+    public boolean isNoiseSuppressDefaultEnabled() {
+        return true;
+    }
+
+    public boolean isGainControlDefaultEnabled() {
+        return false;
+    }
+
+    public boolean isEchoCancelDefaultEnabled() {
+        return false;
     }
 
     protected void audioConfigFinish(AudioConfig config) {
