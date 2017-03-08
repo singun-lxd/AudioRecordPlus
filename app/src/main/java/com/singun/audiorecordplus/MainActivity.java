@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         mWaveform = (WaveformView) findViewById(R.id.audio_waveform);
         RendererFactory rendererFactory = new RendererFactory();
         mWaveform.setRenderer(rendererFactory.createSimpleWaveformRender(ContextCompat.getColor(this, R.color.colorPrimary), Color.WHITE));
+        startVisualiser();
 
         mButtonAction = (FloatingActionButton) findViewById(R.id.fab);
         mButtonAction.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     @Override
     public void onPermissionAllGranted() {
         startOrStopRecording();
-        startVisualiser();
         updateRecordUi();
     }
 
@@ -327,10 +327,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                setRecordEnable(true);
-                Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
-                mButtonPlay.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
-                mButtonPlay.setText(R.string.button_play);
+                updatePlayUi();
             }
         });
     }
