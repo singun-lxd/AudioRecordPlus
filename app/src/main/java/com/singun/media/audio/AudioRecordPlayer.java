@@ -82,6 +82,8 @@ public class AudioRecordPlayer {
 
         mRecordPlayThread = new AudioRecordPlayThread();
         mRecordPlayThread.start();
+
+        audioConfigFinish(mAudioConfig);
     }
 
     protected void updateAudioConfig(AudioConfig config) {
@@ -89,6 +91,10 @@ public class AudioRecordPlayer {
     }
 
     protected void updateAudioProcessConfig(AudioProcessConfig audioProcessConfig) {
+
+    }
+
+    protected void audioConfigFinish(AudioConfig config) {
 
     }
 

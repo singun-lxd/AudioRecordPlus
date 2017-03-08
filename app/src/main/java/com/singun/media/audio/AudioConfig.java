@@ -5,6 +5,25 @@ package com.singun.media.audio;
  */
 
 public class AudioConfig {
+    public AudioConfig() {
+
+    }
+
+    public AudioConfig(AudioConfig audioConfig) {
+        streamType = audioConfig.streamType;
+        audioSource = audioConfig.audioSource;
+        sampleRateInHz = audioConfig.sampleRateInHz;
+        channelInConfig = audioConfig.channelInConfig;
+        channelOutConfig = audioConfig.channelOutConfig;
+        audioFormat = audioConfig.audioFormat;
+        sessionId = audioConfig.sessionId;
+        audioDataSize = audioConfig.audioDataSize;
+        audioDataIn = audioConfig.audioDataIn;
+        audioDataOut = audioConfig.audioDataOut;
+        audioDirPath = audioConfig.audioDirPath;
+        audioName = audioConfig.audioName;
+    }
+
     public int streamType;
     public int audioSource;
     public int sampleRateInHz;

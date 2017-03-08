@@ -3,11 +3,13 @@ package com.singun.audiorecordplus;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.singun.media.audio.AudioConfig;
+import com.singun.media.audio.AudioPlayer;
 import com.singun.media.audio.AudioRecordPlayer;
 import com.singun.system.permission.PermissionRequest;
 import com.singun.ui.audio.visualizers.RendererFactory;
@@ -27,7 +30,7 @@ import com.singun.ui.audio.visualizers.WaveformView;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PermissionRequest.PermissionRequestListener,
-        AudioRecordPlayer.AudioProcessListener {
+        AudioRecordPlayer.AudioProcessListener, AudioPlayer.PlayStateListener {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int CAPTURE_SIZE = 256;
 
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
     private SeekBar mVolumeBar;
     private FloatingActionButton mButtonAction;
+    private Button mButtonPlay;
     private WaveformView mWaveform;
     private Visualizer mVisualizer;
     private long mLastTime = 0;
@@ -57,6 +61,25 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
             @Override
             public void onClick(View view) {
                 mPermissionRequest.checkPermission();
+            }
+        });
+        mButtonPlay = (Button) findViewById(R.id.play);
+        mButtonPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startOrStopPlaying();
+
+                if (mAudioRecordPlayer.isFilePlaying()) {
+                    mButtonAction.setEnabled(false);
+                    Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_pause);
+                    mButtonPlay.setCompoundDrawables(drawable, null, null, null);
+                    mButtonPlay.setText(R.string.button_stop);
+                } else {
+                    mButtonAction.setEnabled(true);
+                    Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
+                    mButtonPlay.setCompoundDrawables(drawable, null, null, null);
+                    mButtonPlay.setText(R.string.button_play);
+                }
             }
         });
 
@@ -88,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         mPermissionRequest.setPermissionRequestListener(this);
         mAudioRecordPlayer = new AudioRecordPlayerPlus(this, getWindow(), true);
         mAudioRecordPlayer.setSpeakerOn(true);
+        mAudioRecordPlayer.setFilePlayStateListener(this);
 //        mAudioRecordPlayer.setAudioProcessListener(this);
     }
 
@@ -137,8 +161,10 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         startVisualiser();
 
         if (mAudioRecordPlayer.isWorking()) {
+            mButtonPlay.setEnabled(false);
             mButtonAction.setImageResource(android.R.drawable.ic_media_pause);
         } else {
+            mButtonPlay.setEnabled(true);
             mButtonAction.setImageResource(android.R.drawable.ic_media_play);
         }
     }
@@ -221,5 +247,26 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         } else {
             mAudioRecordPlayer.startWorking();
         }
+    }
+
+    private void startOrStopPlaying() {
+        if (mAudioRecordPlayer.isFilePlaying()) {
+            mAudioRecordPlayer.stopPlayFile();
+        } else {
+            mAudioRecordPlayer.startPlayFile();
+        }
+    }
+
+    @Override
+    public void onPlayComplete() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mButtonAction.setEnabled(true);
+                Drawable drawable = getResources().getDrawable(android.R.drawable.ic_media_play);
+                mButtonPlay.setCompoundDrawables(drawable, null, null, null);
+                mButtonPlay.setText(R.string.button_play);
+            }
+        });
     }
 }

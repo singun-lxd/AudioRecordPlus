@@ -47,8 +47,12 @@ public class MiniAudioTrack {
         mIsPlaying = true;
     }
 
-    public void writeAudioData(int length) {
-        mAudioTrack.write(mAudioConfig.audioDataOut, 0, length);
+    public int writeAudioData(int length) {
+        return mAudioTrack.write(mAudioConfig.audioDataOut, 0, length);
+    }
+
+    public int writeAudioData(byte[] data, int offset, int length) {
+        return mAudioTrack.write(data, offset, length);
     }
 
     public void stop() {

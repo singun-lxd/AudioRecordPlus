@@ -5,4 +5,6 @@
     <string name="dialog_content_permission_denied">Please try again and allow permission request in dialog.</string>
     <string name="dialog_button_retry">Retry</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="button_play">Play</string>
+    <string name="button_stop">Stop</string>
 </resources>

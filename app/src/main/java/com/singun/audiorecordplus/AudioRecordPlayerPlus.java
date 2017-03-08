@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.view.Window;
 
 import com.singun.media.audio.AudioConfig;
+import com.singun.media.audio.AudioPlayer;
 import com.singun.media.audio.AudioRecordPlayer;
 import com.singun.media.audio.processor.AudioProcessConfig;
 import com.singun.wrapper.WebRTC.WebRTCWrapper;
@@ -16,6 +17,8 @@ import java.io.File;
  */
 
 public class AudioRecordPlayerPlus extends AudioRecordPlayer {
+    private AudioPlayer mPlayer;
+
     public AudioRecordPlayerPlus(Context context, Window window) {
         super(context, window);
     }
@@ -32,8 +35,36 @@ public class AudioRecordPlayerPlus extends AudioRecordPlayer {
 
     @Override
     protected void updateAudioProcessConfig(AudioProcessConfig audioProcessConfig) {
-        audioProcessConfig.noiseSuppress = true;
+        audioProcessConfig.noiseSuppress = false;
         audioProcessConfig.gainControl = false;
         audioProcessConfig.echoCancel = false;
+    }
+
+    protected void audioConfigFinish(AudioConfig config) {
+        mPlayer = new AudioPlayer(new AudioConfig(config));
+    }
+
+    public void startPlayFile() {
+        mPlayer.startPlaying();
+    }
+
+    public void stopPlayFile() {
+        mPlayer.stop();
+    }
+
+    public boolean isFilePlaying() {
+        return mPlayer.isPlaying();
+    }
+
+    public void setFilePlayStateListener(AudioPlayer.PlayStateListener listener) {
+        mPlayer.setPlayStateListener(listener);
+    }
+
+    @Override
+    public void release() {
+        super.release();
+
+        mPlayer.release();
+        mPlayer = null;
     }
 }

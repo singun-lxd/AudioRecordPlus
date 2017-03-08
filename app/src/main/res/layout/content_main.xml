@@ -14,12 +14,28 @@
     tools:context="com.singun.audiorecordplus.MainActivity"
     tools:showIn="@layout/activity_main" >
 
-    <SeekBar
-        android:id="@+id/audio_volume"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp">
-    </SeekBar>
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play"
+            android:drawableLeft="@android:drawable/ic_media_play"/>
+
+        <SeekBar
+            android:id="@+id/audio_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp">
+        </SeekBar>
+
+    </LinearLayout>
+
 
     <!--波纹视图-->
     <com.singun.ui.audio.visualizers.WaveformView
