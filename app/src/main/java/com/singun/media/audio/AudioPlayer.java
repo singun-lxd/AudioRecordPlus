@@ -1,5 +1,6 @@
 package com.singun.media.audio;
 
+import com.singun.media.audio.encode.AudioEncodeUtil;
 import com.singun.media.audio.player.MiniAudioTrack;
 
 import java.io.BufferedInputStream;
@@ -77,7 +78,7 @@ public class AudioPlayer {
         public void run() {
             playStart();
             try {
-                mInputStream.skip(44);
+                mInputStream.skip(AudioEncodeUtil.WAV_FILE_HEADER_LENGTH);
             } catch (Exception e) {
                 e.printStackTrace();
             }

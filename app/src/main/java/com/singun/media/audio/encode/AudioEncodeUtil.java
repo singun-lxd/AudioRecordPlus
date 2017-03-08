@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class AudioEncodeUtil {
+    public static final int WAV_FILE_HEADER_LENGTH = 44;
 
     public static void convertPcmToWav(File pcmFilePath, File wavFilePath, int sampleRate, int channels){
 
@@ -52,7 +53,7 @@ public class AudioEncodeUtil {
 
     private static void writeWaveFileHeader(FileOutputStream out, long totalAudioLen, long totalDataLen, int longSampleRate,
                                             int channels, long byteRate) throws IOException {
-        byte[] header = new byte[44];
+        byte[] header = new byte[WAV_FILE_HEADER_LENGTH];
         header[0] = 'R'; // RIFF
         header[1] = 'I';
         header[2] = 'F';
