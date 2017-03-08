@@ -1,5 +1,8 @@
 package com.singun.media.audio.recorder;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import com.singun.media.audio.AudioConfig;
 
 import java.io.File;
@@ -29,6 +32,7 @@ public class ExtraAudioRecorder extends BaseAudioRecorder implements ExtraPullTr
         init(audioConfig);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void init(AudioConfig audioConfig) {
         mAudioSource = new omrecorder.AudioSource.Smart(
                 audioConfig.audioSource,
@@ -38,6 +42,10 @@ public class ExtraAudioRecorder extends BaseAudioRecorder implements ExtraPullTr
 
         int minBufferSize = mAudioSource.minimumBufferSize();
         mAudioConfig.audioDataSize = minBufferSize / 2;
+
+        if (isSupportRecorderSession()) {
+            audioConfig.sessionId = mAudioSource.audioRecorder().getAudioSessionId();
+        }
     }
 
     private void prepare(AudioConfig audioConfig) throws IllegalArgumentException {

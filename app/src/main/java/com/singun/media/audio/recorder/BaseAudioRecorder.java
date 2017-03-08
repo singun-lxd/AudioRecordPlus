@@ -1,5 +1,7 @@
 package com.singun.media.audio.recorder;
 
+import android.os.Build;
+
 import com.singun.media.audio.AudioConfig;
 import com.singun.media.audio.processor.AudioProcessor;
 
@@ -10,6 +12,9 @@ import com.singun.media.audio.processor.AudioProcessor;
 public class BaseAudioRecorder {
     private AudioProcessor mAudioProcessor;
 
+    protected static boolean isSupportRecorderSession() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
 
     public void setAudioProcessor(AudioProcessor audioProcessor) {
         mAudioProcessor = audioProcessor;

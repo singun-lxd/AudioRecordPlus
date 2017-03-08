@@ -1,5 +1,6 @@
 package com.singun.media.audio.recorder;
 
+import android.annotation.TargetApi;
 import android.media.AudioRecord;
 import android.os.Build;
 
@@ -23,6 +24,7 @@ public class MiniAudioRecorder extends BaseAudioRecorder {
         init();
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void init() throws IllegalArgumentException {
         int minBufferSize = AudioRecord.getMinBufferSize(
                 mAudioConfig.sampleRateInHz,
@@ -37,13 +39,10 @@ public class MiniAudioRecorder extends BaseAudioRecorder {
                 minBufferSize);
 
         mAudioConfig.audioDataSize = minBufferSize / 2;
+
         if (isSupportRecorderSession()) {
             mAudioConfig.sessionId = mAudioRecord.getAudioSessionId();
         }
-    }
-
-    private static boolean isSupportRecorderSession() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
     public void startRecording() {
