@@ -5,11 +5,19 @@ package com.singun.wrapper.WebRTC;
  */
 
 public class GainControl {
+    private static final int AGC_DB_DEFAULT = 20;
+    private static final int AGC_DBFS_DEFAULT = 3;
+
     private int mHandle;
 
-    public boolean init(int sampleRate, int db, int dbfs) {
-        mHandle = initGainControl(sampleRate, db, dbfs);
+    public boolean init(int sampleRate) {
+        mHandle = initGainControl(sampleRate);
+        setConfig(AGC_DB_DEFAULT, AGC_DBFS_DEFAULT);
         return mHandle != 0;
+    }
+
+    public void setConfig(int db, int dbfs) {
+        setGainControlConfig(mHandle, db, dbfs);
     }
 
     public short[] process(short[] data, int length) {
@@ -24,11 +32,15 @@ public class GainControl {
     /**
      * 初始化增益设置
      * @param sampleRate 采样率
-     * @param db    增益倍数，0~31，越大声音越大，一般设为20
-     * @param dbfs  相对于full scale的db，0~31，越小声音越大，一般设为3
      * @return 是否初始化成功
      */
-    private native int initGainControl(int sampleRate, int db, int dbfs);
+    private native int initGainControl(int sampleRate);
+
+    /**
+     * @param db    增益倍数，0~31，越大声音越大，一般设为20
+     * @param dbfs  相对于full scale的db，0~31，越小声音越大，一般设为3
+     */
+    private native int setGainControlConfig(int handle, int db, int dbfs);
 
     /**
      * 处理增益

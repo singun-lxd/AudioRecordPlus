@@ -16,7 +16,8 @@ public:
     agc_wrapper();
     ~agc_wrapper();
 
-    int agc_init(int agcDb, int agcDbfs);
+    int agc_init();
+    int agc_config(int agcDb, int agcDbfs);
     int agc_proc(const short *input, short *output, int pcmLen);
 private:
     void reset_data();

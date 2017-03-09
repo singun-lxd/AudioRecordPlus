@@ -10,10 +10,18 @@ extern "C" {
 /*
  * Class:     com_singun_wrapper_WebRTC_GainControl
  * Method:    initGainControl
- * Signature: (III)I
+ * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_singun_wrapper_WebRTC_GainControl_initGainControl
-  (JNIEnv *, jobject, jint, jint, jint);
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_singun_wrapper_WebRTC_GainControl
+ * Method:    setGainControlConfig
+ * Signature: (III)I
+ */
+JNIEXPORT jint JNICALL Java_com_singun_wrapper_WebRTC_GainControl_setGainControlConfig
+        (JNIEnv *, jobject, jint, jint, jint);
 
 /*
  * Class:     com_singun_wrapper_WebRTC_GainControl

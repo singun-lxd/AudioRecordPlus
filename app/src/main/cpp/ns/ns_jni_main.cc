@@ -7,14 +7,21 @@ extern "C" {
 #endif
 
 JNIEXPORT jint JNICALL
-Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress(JNIEnv *env, jobject instance, jint sample_rate, jint mode) {
+Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress(JNIEnv *env, jobject instance, jint sample_rate) {
     ns_wrapper* wrapper = new ns_wrapper();
-    int init = wrapper->ns_init(sample_rate, mode);
+    int init = wrapper->ns_init(sample_rate);
     if (init != 0) {
         delete wrapper;
         return 0;
     }
     return (int) wrapper;
+}
+
+JNIEXPORT jint JNICALL
+Java_com_singun_wrapper_WebRTC_NoiseSuppress_setNoiseSuppressMode(JNIEnv *, jobject, jint handle, jint mode) {
+    ns_wrapper* wrapper = (ns_wrapper*) handle;
+    int ret = wrapper->ns_config(mode);
+    return ret;
 }
 
 JNIEXPORT jshortArray JNICALL

@@ -7,10 +7,6 @@ import android.util.Log;
  */
 
 public class WebRTCWrapper {
-    private static final int NS_MODE = 2;
-    private static final int AGC_DB = 20;
-    private static final int AGC_DBFS = 3;
-
     private boolean mInit;
     private NoiseSuppress mNoiseSuppress;
     private EchoCancel mEchoCancel;
@@ -29,7 +25,7 @@ public class WebRTCWrapper {
             return false;
         }
 
-        boolean noiseInit = mNoiseSuppress.init(sampleRate, NS_MODE);
+        boolean noiseInit = mNoiseSuppress.init(sampleRate);
         if (!noiseInit) {
             return false;
         }
@@ -37,7 +33,7 @@ public class WebRTCWrapper {
         if (!echoCancel) {
             return false;
         }
-        boolean gainInit = mGainControl.init(sampleRate, AGC_DB, AGC_DBFS);
+        boolean gainInit = mGainControl.init(sampleRate);
         if (!gainInit) {
             return false;
         }
@@ -59,6 +55,14 @@ public class WebRTCWrapper {
             Log.e("TAG", "Couldn't load lib:   - " + e.getMessage());
         }
         return libLoaded;
+    }
+
+    public void setNoiseSuppressMode(int mode) {
+        mNoiseSuppress.setMode(mode);
+    }
+
+    public void setGainControlConfig(int db, int dbfs) {
+        mGainControl.setConfig(db, dbfs);
     }
 
     public short[] processNoiseSuppress(short[] data, int length) {

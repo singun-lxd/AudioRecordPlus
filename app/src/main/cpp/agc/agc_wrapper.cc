@@ -28,15 +28,11 @@ agc_wrapper::~agc_wrapper() {
  *output:
  *    int      0-success，1-fail
  */
-int agc_wrapper::agc_init(int agcDb, int agcDbfs) {
+int agc_wrapper::agc_init() {
     if (base_wrapper::init(sampleHz) < 0) {
         return -1;
     }
     int iBand, status;
-    if(agcDbfs < 0 || agcDbfs > 31 || agcDb < 0 || agcDb > 31) {
-        fprintf(stderr, "[AgcInit]: agcDb and agcDbfs should be 0~31\n");
-        return -1;
-    }
     agc = WebRtcAgc_Create();
     int minLevel = 0;
     int maxLevel = 255;
@@ -46,20 +42,29 @@ int agc_wrapper::agc_init(int agcDb, int agcDbfs) {
         fprintf(stderr, "[AgcInit]: failed in WebRtcAgc_Init\n");
         return -1;
     }
-    WebRtcAgcConfig agcConfig;
-    agcConfig.limiterEnable = 1;
-    agcConfig.compressionGaindB = agcDb;   //在Fixed模式下，越大声音越大
-    agcConfig.targetLevelDbfs = agcDbfs;   //dbfs表示相对于full scale的下降值，0表示full scale，越小声音越大
-    status = WebRtcAgc_set_config(agc, agcConfig);
-    if(status != 0) {
-        fprintf(stderr, "[AgcInit]: failed in WebRtcAgc_set_config\n");
-        return -1;
-    }
+
     agcIn  = (short**)malloc(nBands*sizeof(short*));
     agcOut = (short**)malloc(nBands*sizeof(short*));
     for(iBand = 0; iBand < nBands; iBand++) {
         agcIn [iBand] = (short*)malloc(frameSh*sizeof(short));
         agcOut[iBand] = (short*)malloc(frameSh*sizeof(short));
+    }
+    return 0;
+}
+
+int agc_wrapper::agc_config(int agcDb, int agcDbfs) {
+    if(agcDbfs < 0 || agcDbfs > 31 || agcDb < 0 || agcDb > 31) {
+        fprintf(stderr, "[AgcConfig]: agcDb and agcDbfs should be 0~31\n");
+        return -1;
+    }
+    WebRtcAgcConfig agcConfig;
+    agcConfig.limiterEnable = 1;
+    agcConfig.compressionGaindB = agcDb;   //在Fixed模式下，越大声音越大
+    agcConfig.targetLevelDbfs = agcDbfs;   //dbfs表示相对于full scale的下降值，0表示full scale，越小声音越大
+    int status = WebRtcAgc_set_config(agc, agcConfig);
+    if(status != 0) {
+        fprintf(stderr, "[AgcConfig]: failed in WebRtcAgc_set_config\n");
+        return -1;
     }
     return 0;
 }

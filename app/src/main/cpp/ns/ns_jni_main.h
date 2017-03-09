@@ -10,10 +10,18 @@ extern "C" {
 /*
  * Class:     com_singun_wrapper_WebRTC_NoiseSuppress
  * Method:    initNoiseSuppress
- * Signature: (II)I
+ * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_singun_wrapper_WebRTC_NoiseSuppress_initNoiseSuppress
-  (JNIEnv *, jobject, jint, jint);
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_singun_wrapper_WebRTC_NoiseSuppress
+ * Method:    setNoiseSuppressMode
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_com_singun_wrapper_WebRTC_NoiseSuppress_setNoiseSuppressMode
+        (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     com_singun_wrapper_WebRTC_NoiseSuppress

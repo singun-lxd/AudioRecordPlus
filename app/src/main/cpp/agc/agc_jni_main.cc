@@ -7,14 +7,21 @@ extern "C" {
 #endif
 
 JNIEXPORT jint JNICALL
-Java_com_singun_wrapper_WebRTC_GainControl_initGainControl(JNIEnv *env, jobject instance, int sampleRate, int db, int dbfs) {
+Java_com_singun_wrapper_WebRTC_GainControl_initGainControl(JNIEnv *env, jobject instance, jint sampleRate) {
     agc_wrapper* wrapper = new agc_wrapper();
-    int init = wrapper->agc_init(db, dbfs);
+    int init = wrapper->agc_init();
     if (init != 0) {
         delete wrapper;
         return 0;
     }
     return (int) wrapper;
+}
+
+JNIEXPORT jint JNICALL
+Java_com_singun_wrapper_WebRTC_GainControl_setGainControlConfig(JNIEnv *, jobject, jint handle, jint db, jint dbfs) {
+    agc_wrapper* wrapper = (agc_wrapper*) handle;
+    int ret = wrapper->agc_config(db, dbfs);
+    return ret;
 }
 
 JNIEXPORT jshortArray JNICALL
