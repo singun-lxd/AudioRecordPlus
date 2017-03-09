@@ -8,5 +8,6 @@ import android.graphics.Canvas;
  * Created by wangchenlong on 16/2/11.
  */
 public interface WaveformRenderer {
+
     void render(Canvas canvas, byte[] waveform);
 }
