@@ -5,14 +5,10 @@ package com.singun.wrapper.WebRTC;
  */
 
 public class GainControl {
-    private static final int AGC_DB_DEFAULT = 20;
-    private static final int AGC_DBFS_DEFAULT = 3;
-
     private int mHandle;
 
     public boolean init(int sampleRate) {
         mHandle = initGainControl(sampleRate);
-        setConfig(AGC_DB_DEFAULT, AGC_DBFS_DEFAULT);
         return mHandle != 0;
     }
 

@@ -5,10 +5,24 @@
     <string name="dialog_content_permission_denied">Please try again and allow permission request in dialog.</string>
     <string name="dialog_button_retry">Retry</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_ok">OK</string>
+    <string name="text_ns_mode">NS Mode: </string>
+    <string name="text_agc_config">AGC Config:</string>
+    <string name="text_agc_db">CompGained:</string>
+    <string name="text_agc_dbfs">TargetLevel:</string>
+    <string name="text_agc_desc">* The larger the left value or the smaller the right value, the higher the volume</string>
+    <string name="toast_setting_disabled">Settings is disabled while recording.</string>
     <string name="button_play">Play</string>
     <string name="button_stop">Stop</string>
     <string name="check_play_while_recording">Play sound while recording</string>
     <string name="check_noise_suppress">Noise Suppress</string>
     <string name="check_gain_control">Gain Control</string>
     <string name="check_echo_cancel">Echo Cancel</string>
+
+    <string-array name="ns_mode_item">
+        <item>0 - Mild</item>
+        <item>1 - Medium</item>
+        <item>2 - Aggressive</item>
+        <item>3 - Top</item>
+    </string-array>
 </resources>

@@ -12,6 +12,7 @@ import com.singun.media.audio.player.MiniAudioTrack;
 import com.singun.media.audio.processor.AudioProcessConfig;
 import com.singun.media.audio.processor.AudioProcessor;
 import com.singun.media.audio.recorder.ExtraAudioRecorder;
+import com.singun.wrapper.WebRTC.ProcessorConfig;
 
 /**
  * Created by singun on 2017/3/1 0001.
@@ -130,7 +131,6 @@ public class AudioRecordPlayer {
         mAudioTrack.setVolume(volume);
     }
 
-
     public void setNoiseSuppressEnabled(boolean enabled) {
         mAudioProcessor.setNoiseSuppressEnabled(enabled);
     }
@@ -153,6 +153,18 @@ public class AudioRecordPlayer {
 
     public boolean isEchoCancelEnabled() {
         return mAudioProcessor.isEchoCancelEnabled();
+    }
+
+    public void setNativeNoiseSuppressMode(int mode) {
+        mAudioProcessor.setNativeNoiseSuppressMode(mode);
+    }
+
+    public void setNativeGainControlConfig(int db, int dbfs) {
+        mAudioProcessor.setNativeGainControlConfig(db, dbfs);
+    }
+
+    public ProcessorConfig getNativeProcessorConfig() {
+        return mAudioProcessor.getNativeProcessorConfig();
     }
 
     public void startWorking() {

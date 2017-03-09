@@ -27,11 +27,12 @@ import com.singun.media.audio.AudioRecordPlayer;
 import com.singun.system.permission.PermissionRequest;
 import com.singun.ui.audio.visualizers.RendererFactory;
 import com.singun.ui.audio.visualizers.WaveformView;
+import com.singun.wrapper.WebRTC.ProcessorConfig;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PermissionRequest.PermissionRequestListener,
-        AudioRecordPlayer.AudioProcessListener, AudioPlayer.PlayStateListener {
+        AudioRecordPlayer.AudioProcessListener, AudioPlayer.PlayStateListener, SettingDialog.SettingChangeListener {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int CAPTURE_SIZE = 256;
 
@@ -167,6 +168,11 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if (mAudioRecordPlayer.isWorking()) {
+                Toast.makeText(this, R.string.button_stop, Toast.LENGTH_SHORT);
+            } else {
+                new SettingDialog(this, this).show(mAudioRecordPlayer.getNativeProcessorConfig());
+            }
             return true;
         }
 
@@ -330,5 +336,11 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
                 updatePlayUi();
             }
         });
+    }
+
+    @Override
+    public void onSettingChange(ProcessorConfig processorConfig) {
+        mAudioRecordPlayer.setNativeNoiseSuppressMode(processorConfig.nsMode);
+        mAudioRecordPlayer.setNativeGainControlConfig(processorConfig.agcDb, processorConfig.agcDbfs);
     }
 }

@@ -5,16 +5,10 @@ package com.singun.wrapper.WebRTC;
  */
 
 class NoiseSuppress {
-    public static final int NS_MODE_LEVEL_0 = 0; // |mode| = 0 is mild (6dB)
-    public static final int NS_MODE_LEVEL_1 = 1; // |mode| = 1 is medium (10dB)
-    public static final int NS_MODE_LEVEL_2 = 2; // |mode| = 2 is aggressive (15dB).
-    public static final int NS_MODE_LEVEL_3 = 3;
-
     private int mHandle;
 
     public boolean init(int sampleRate) {
         mHandle = initNoiseSuppress(sampleRate);
-        setMode(NS_MODE_LEVEL_2);
         return mHandle != 0;
     }
 

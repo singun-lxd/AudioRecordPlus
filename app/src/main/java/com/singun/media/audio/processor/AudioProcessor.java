@@ -5,6 +5,7 @@ import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
 
 import com.singun.media.audio.AudioConfig;
+import com.singun.wrapper.WebRTC.ProcessorConfig;
 
 /**
  * Created by singun on 2017/3/3 0003.
@@ -141,6 +142,18 @@ public class AudioProcessor {
     public static boolean isEchoCancelSupported() {
         return AndroidAudioProcessorSupport.isSupportEchoCanceler() ||
                 NativeAudioProcessorSupport.isSupportEchoCanceler();
+    }
+
+    public void setNativeNoiseSuppressMode(int mode) {
+        mNativeProcessor.setNoiseSuppressMode(mode);
+    }
+
+    public void setNativeGainControlConfig(int db, int dbfs) {
+        mNativeProcessor.setGainControlConfig(db, dbfs);
+    }
+
+    public ProcessorConfig getNativeProcessorConfig() {
+        return mNativeProcessor.getConfig();
     }
 
     public void release() {

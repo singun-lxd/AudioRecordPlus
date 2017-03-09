@@ -5,10 +5,24 @@
     <string name="dialog_content_permission_denied">请重试并且在对话框中允许权限请求。</string>
     <string name="dialog_button_retry">重试</string>
     <string name="dialog_button_cancel">取消</string>
+    <string name="dialog_button_ok">确定</string>
+    <string name="text_ns_mode">噪声减弱模式：</string>
+    <string name="text_agc_config">音量增益配置:</string>
+    <string name="text_agc_db">压缩倍数：</string>
+    <string name="text_agc_dbfs">目标级别：</string>
+    <string name="text_agc_desc">* 左边数值越大或者右边数值越小，音量越高</string>
+    <string name="toast_setting_disabled">录制过程中设置禁用。</string>
     <string name="button_play">播放</string>
     <string name="button_stop">停止</string>
     <string name="check_play_while_recording">边录边播</string>
-    <string name="check_noise_suppress">噪声降低</string>
+    <string name="check_noise_suppress">噪声减弱</string>
     <string name="check_gain_control">音量增益</string>
     <string name="check_echo_cancel">回声消除</string>
+
+    <string-array name="ns_mode_item">
+        <item>0 - 轻柔</item>
+        <item>1 - 中等</item>
+        <item>2 - 野蛮</item>
+        <item>3 - 顶级</item>
+    </string-array>
 </resources>

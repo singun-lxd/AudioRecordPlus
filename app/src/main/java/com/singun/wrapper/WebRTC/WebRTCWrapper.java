@@ -8,12 +8,14 @@ import android.util.Log;
 
 public class WebRTCWrapper {
     private boolean mInit;
+    private ProcessorConfig mConfig;
     private NoiseSuppress mNoiseSuppress;
     private EchoCancel mEchoCancel;
     private GainControl mGainControl;
 
     public WebRTCWrapper() {
         mInit = false;
+        mConfig = new ProcessorConfig();
         mNoiseSuppress = new NoiseSuppress();
         mEchoCancel = new EchoCancel();
         mGainControl = new GainControl();
@@ -29,14 +31,18 @@ public class WebRTCWrapper {
         if (!noiseInit) {
             return false;
         }
+        mNoiseSuppress.setMode(mConfig.nsMode);
+
         boolean echoCancel = mEchoCancel.init(sampleRate);
         if (!echoCancel) {
             return false;
         }
+
         boolean gainInit = mGainControl.init(sampleRate);
         if (!gainInit) {
             return false;
         }
+        mGainControl.setConfig(mConfig.agcDb, mConfig.agcDbfs);
 
         mInit = true;
         return true;
@@ -58,11 +64,18 @@ public class WebRTCWrapper {
     }
 
     public void setNoiseSuppressMode(int mode) {
+        mConfig.nsMode = mode;
         mNoiseSuppress.setMode(mode);
     }
 
     public void setGainControlConfig(int db, int dbfs) {
+        mConfig.agcDb = db;
+        mConfig.agcDbfs = dbfs;
         mGainControl.setConfig(db, dbfs);
+    }
+
+    public ProcessorConfig getConfig() {
+        return mConfig;
     }
 
     public short[] processNoiseSuppress(short[] data, int length) {

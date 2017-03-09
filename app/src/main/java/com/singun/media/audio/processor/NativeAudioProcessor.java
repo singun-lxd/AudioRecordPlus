@@ -1,6 +1,7 @@
 package com.singun.media.audio.processor;
 
 import com.singun.media.audio.AudioConfig;
+import com.singun.wrapper.WebRTC.ProcessorConfig;
 import com.singun.wrapper.WebRTC.WebRTCWrapper;
 
 /**
@@ -74,6 +75,18 @@ class NativeAudioProcessor {
             dataOut = mWebRTCWrapper.processGainControl(dataIn, length);
         }
         return dataOut;
+    }
+
+    public void setNoiseSuppressMode(int mode) {
+        mWebRTCWrapper.setNoiseSuppressMode(mode);
+    }
+
+    public void setGainControlConfig(int db, int dbfs) {
+        mWebRTCWrapper.setGainControlConfig(db, dbfs);
+    }
+
+    public ProcessorConfig getConfig() {
+        return mWebRTCWrapper.getConfig();
     }
 
     public void release() {
