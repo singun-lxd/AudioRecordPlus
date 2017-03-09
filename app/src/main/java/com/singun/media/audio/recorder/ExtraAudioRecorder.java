@@ -52,9 +52,20 @@ public class ExtraAudioRecorder extends BaseAudioRecorder implements ExtraPullTr
 
     private void prepare(AudioConfig audioConfig) throws IllegalArgumentException {
         if (mRecorder == null) {
+            checkAndCreateDirectory(audioConfig);
             mRecorder = OmRecorder.wav(
                     new ExtraPullTransport(mAudioSource, this),
                     new File(audioConfig.audioDirPath, audioConfig.audioName + ".wav"));
+        }
+    }
+
+    private void checkAndCreateDirectory(AudioConfig audioConfig) {
+        File dir = new File(audioConfig.audioDirPath);
+        if (dir.isFile()) {
+            dir.delete();
+        }
+        if (!dir.isDirectory()) {
+            dir.mkdirs();
         }
     }
 
