@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             if (mAudioRecordPlayer.isWorking()) {
-                Toast.makeText(this, R.string.button_stop, Toast.LENGTH_SHORT);
+                Toast.makeText(this, R.string.toast_setting_disabled, Toast.LENGTH_SHORT).show();
             } else {
                 new SettingDialog(this, this).show(mAudioRecordPlayer.getNativeProcessorConfig());
             }
