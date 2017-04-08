@@ -87,7 +87,8 @@ public class AudioFileWriter {
             }
             for (int i = 0; i < length; i++) {
                 short data = mAudioConfig.audioDataOut[i];
-                dataOutputStream.writeShort(data);
+                dataOutputStream.write((byte) (data & 0x00FF));
+                dataOutputStream.write((byte) ((data & 0xFF00) >> 8));
             }
         } catch (IOException e) {
             e.printStackTrace();
