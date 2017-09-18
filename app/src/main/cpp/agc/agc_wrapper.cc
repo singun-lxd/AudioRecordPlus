@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "agc_wrapper.h"
 #include "gain_control.h"
 
